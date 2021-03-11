@@ -11,7 +11,7 @@ public class Person {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
-    private String user;
+    private String sort;
     private String firstName;
     private String lastName;
     private String address;
@@ -28,12 +28,12 @@ public class Person {
         this.id = id;
     }
 
-    public String getUser() {
-        return user;
+    public String getSort() {
+        return sort;
     }
 
-    public void setUser(String user) {
-        this.user = user;
+    public void setSort(String sort) {
+        this.sort = sort;
     }
 
     public String getFirstName() {

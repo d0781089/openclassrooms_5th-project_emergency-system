@@ -1,0 +1,43 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Emergency persons list</title>
+    <link rel="stylesheet" th:href="@{/style.css}"></link>
+</head>
+
+<body>
+<h2>Sort: All</h2>
+<div th:unless="${#lists.isEmpty(persons)}">
+    <dl th:each="person : ${persons}">
+        <dt class="personHeadline">
+            <span th:text="${person.firstName}">Title</span> by
+            <span th:text="${person.lastName}">Author</span>
+        </dt>
+        <dd class="personDescription">
+          <span th:if="${person.address}"
+                th:text="${person.address}">Address</span>
+            <span th:if="${person.address eq null}">
+                No description available</span>
+        </dd>
+    </dl>
+</div>
+<div th:if="${#lists.isEmpty(persons)}">
+    <p>You have no one in the emergency list</p>
+</div>
+
+
+<hr/>
+
+<h3>Add a person</h3>
+<form method="POST">
+    <label for="firstName">First name:</label>
+    <input type="text" name="firstName" size="50"></input><br/>
+    <label for="lastName">Last name:</label>
+    <input type="text" name="lastName" size="50"></input><br/>
+    <label for="address">Address:</label><br/>
+    <textarea name="address" cols="80" rows="5"></textarea><br/>
+    <input type="submit"></input>
+</form>
+
+</body>
+</html>
