@@ -2,7 +2,7 @@
       xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Emergency persons list</title>
-    <link rel="stylesheet" th:href="@{/style.css}"></link>
+    <!--<link rel="stylesheet" th:href="@{/style.css}"></link> -->
 </head>
 
 <body>
@@ -10,8 +10,8 @@
 <div th:unless="${#lists.isEmpty(persons)}">
     <dl th:each="person : ${persons}">
         <dt class="personHeadline">
-            <span th:text="${person.firstName}">Title</span> by
-            <span th:text="${person.lastName}">Author</span>
+            <span th:text="${person.firstName}">firstName</span> by
+            <span th:text="${person.lastName}">lastName</span>
         </dt>
         <dd class="personDescription">
           <span th:if="${person.address}"

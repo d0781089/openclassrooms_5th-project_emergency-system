@@ -24,7 +24,7 @@ public class PersonController {
     }
 
     @RequestMapping(method= RequestMethod.GET)
-    public String userPersons(Model model) {
+    public String sortPersons(Model model) {
 
         List<Person> persons = personRepository.findBySort(sort);
         if (persons != null) {
