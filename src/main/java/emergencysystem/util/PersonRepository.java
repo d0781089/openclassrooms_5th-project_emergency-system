@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface PersonRepository extends JpaRepository<Person, Long> {
 
-    List<Person> findPerson(String person);
+    List<Person> findBySort(String user);
 
 }

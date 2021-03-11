@@ -11,6 +11,7 @@ public class Person {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
+    private String user;
     private String firstName;
     private String lastName;
     private String address;
@@ -25,6 +26,14 @@ public class Person {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
     }
 
     public String getFirstName() {
