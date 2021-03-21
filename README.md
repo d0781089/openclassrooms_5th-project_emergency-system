@@ -1,4 +1,4 @@
-![Java 11.0.10](https://img.shields.io/badge/Java-1.8.0__282-red)
+![Java 11.0.10](https://img.shields.io/badge/Java-11.0.10-red)
 
 <img src="https://i.imgur.com/BA4LM7N.png" align="right">
 
