@@ -1,0 +1,40 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Emergency firestations list</title>
+    <!--<link rel="stylesheet" th:href="@{/style.css}"></link> -->
+</head>
+
+<body>
+<h2>Sélection : TOUTES</h2>
+<div th:unless="${#lists.isEmpty(firestations)}">
+    <dl th:each="fireStation : ${firestations}">
+        <dt class="fireStationHeadline">
+            <span th:text="'Fire station n°' + ${fireStation.station}">station</span>
+        </dt>
+        <dd class="fireStationInformation">
+          <span th:if="${fireStation.address}"
+                th:text="${fireStation.address}">address</span>
+            <span th:if="${fireStation.address eq null}">
+                No address available</span>
+        </dd>
+    </dl>
+</div>
+<div th:if="${#lists.isEmpty(firestations)}">
+    <p>La liste ne présente aucune station.</p>
+</div>
+
+
+<hr/>
+
+<h3>Ajouter une station :</h3>
+<form method="POST">
+    <label for="station">N° de la station :</label>
+    <input type="text" name="station" size="25"></input><br/><br/>
+    <label for="address">Adresse :</label><br/>
+    <textarea name="address" cols="75" rows="5"></textarea><br/><br/>
+    <input type="submit"></input>
+</form>
+
+</body>
+</html>

@@ -34,7 +34,7 @@ public class PersonController {
     }
 
     @RequestMapping(method=RequestMethod.POST)
-    public String addToReadingList(Person person) {
+    public String addToPersonsList(Person person) {
         person.setSort(sort);
         personRepository.save(person);
         return "redirect:/persons";
