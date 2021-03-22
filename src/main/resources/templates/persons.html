@@ -1,71 +1,108 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Emergency persons list</title>
-    <!--<link rel="stylesheet" th:href="@{/style.css}"></link> -->
+    <title>SafetyNet : Personnes à risque</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link th:href="@{/main.css}" rel="stylesheet" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+          crossorigin="anonymous">
+    <link rel="shortcut icon" type="image/png" th:href="@{/img/safety-alerts-icon.png}"/>
 </head>
 
 <body>
-<h2>Sélection : TOUS</h2>
-<div th:unless="${#lists.isEmpty(persons)}">
-    <dl th:each="person : ${persons}">
-        <dt class="personHeadline">
-            <span th:text="${person.firstName}">firstName</span>
-            <span th:text="${person.lastName}">lastName</span>
-        </dt>
-        <dd class="personInformation">
-          <span th:if="${person.address}"
-                th:text="${person.address}">address</span>
-            <span th:if="${person.address eq null}">
-                No address available</span>
-        </dd>
-        <dd class="personInformation">
-            <span th:if="${person.city}"
-                  th:text="${person.city}">city</span>
-            <span th:if="${person.city eq null}">
-                No city available</span>
-            <span th:if="${person.zip}"
-                  th:text="${person.zip}">zip</span>
-            <span th:if="${person.zip eq null}">
-                No zip available</span>
-        </dd>
-        <dd class="personInformation">
-            <span th:if="${person.phone}"
-                  th:text="${person.phone}">phone</span>
-            <span th:if="${person.phone eq null}">
-                No phone available</span>
-            <span th:if="${person.email}"
-                  th:text="${person.email}">email</span>
-            <span th:if="${person.email eq null}">
-                No email available</span>
-        </dd>
-    </dl>
-</div>
-<div th:if="${#lists.isEmpty(persons)}">
-    <p>La liste ne présente aucune personne.</p>
-</div>
+    <section class="container-fluid bg">
+        <section class="d-flex justify-content-center align-items-center app-container">
+            <section class="col-12 col-sm-6 col-md-3">
+                <div class="overflow-auto fire-stations-list card-box">
+                    <h2 style="text-align: center">Tout afficher</h2>
+                    <hr/>
+                    <div th:unless="${#lists.isEmpty(persons)}">
+                        <dl th:each="person : ${persons}">
+                            <dt class="personHeadline">
+                                <span th:text="${person.firstName}">firstName</span>
+                                <span th:text="${person.lastName}">lastName</span>
+                            </dt>
+                            <dd class="personInformation">
+                              <span th:if="${person.address}"
+                                    th:text="${person.address}">address</span>
+                                <small class="form-text text-muted" th:if="${person.address eq null}">
+                                    Aucune adresse</small>
+                            </dd>
+                            <dd class="personInformation">
+                                <span th:if="${person.city}"
+                                      th:text="${person.city}">city</span>
+                                <small class="form-text text-muted" th:if="${person.city eq null}">
+                                    Aucune ville</small>
+                                <span th:if="${person.zip}"
+                                      th:text="${person.zip}">zip</span>
+                                <small class="form-text text-muted" th:if="${person.zip eq null}">
+                                    Aucun code postal</small>
+                            </dd>
+                            <dd class="personInformation">
+                                <span th:if="${person.phone}"
+                                      th:text="${person.phone}">phone</span>
+                                <small class="form-text text-muted" th:if="${person.phone eq null}">
+                                    Aucun numéro de téléphone</small>
+                                <span th:if="${person.email}"
+                                      th:text="${person.email}">email</span>
+                                <small class="form-text text-muted" th:if="${person.email eq null}">
+                                    Aucun courriel</small>
+                            </dd>
+                        </dl>
+                    </div>
+                    <div th:if="${#lists.isEmpty(persons)}">
+                        <small class="form-text text-muted">La liste ne présente aucune personne...</small>
+                    </div>
+                </div>
+            </section>
 
+            <section class="col-12 col-sm-6 col-md-3 add-section">
+                <form method="POST" class="form-container card-box overflow-auto">
+                    <h3>Ajouter une personne</h3>
+                    <hr/>
+                    <div class="form-group">
+                        <label for="firstName">Prénom :</label><br/>
+                        <input type="text" name="firstName" class="btn-block"></input>
+                    </div>
+                    <div class="form-group">
+                    <label for="lastName">Nom :</label><br/>
+                    <input type="text" name="lastName" class="btn-block"></input>
+                    </div>
+                    <div class="form-group">
+                    <label for="address">Adresse :</label><br/>
+                    <textarea name="address" rows="2" class="btn-block"></textarea>
+                    </div>
+                    <div class="form-group">
+                    <label for="city">Ville :</label><br/>
+                    <input type="text" name="city" class="btn-block"></input>
+                    </div>
+                    <div class="form-group">
+                    <label for="zip">Code postal :</label><br/>
+                    <input type="text" name="zip" class="btn-block"></input>
+                    </div>
+                    <div class="form-group">
+                    <label for="phone">Téléphone :</label><br/>
+                    <input type="text" name="phone" class="btn-block"></input>
+                    </div>
+                    <div class="form-group">
+                    <label for="email">Courriel :</label><br/>
+                    <input type="text" name="email" class="btn-block"></input>
+                    </div>
+                    <input type="submit" class="btn btn-primary btn-block"></input>
+                </form>
+            </section>
+        </section>
+    </section>
 
-<hr/>
-
-<h3>Ajouter une personne</h3>
-<form method="POST">
-    <label for="firstName">Prénom :</label>
-    <input type="text" name="firstName" size="25"></input>
-    <label for="lastName">Nom :</label>
-    <input type="text" name="lastName" size="25"></input><br/><br/>
-    <label for="address">Adresse :</label><br/>
-    <textarea name="address" cols="75" rows="5"></textarea><br/><br/>
-    <label for="city">Ville :</label>
-    <input type="text" name="city" size="25"></input>
-    <label for="zip">Code postal :</label>
-    <input type="text" name="zip" size="25"></input><br/><br/>
-    <label for="phone">Téléphone :</label>
-    <input type="text" name="phone" size="25"></input>
-    <label for="email">Courriel :</label>
-    <input type="text" name="email" size="25"></input><br/><br/>
-    <input type="submit"></input>
-</form>
-
-</body>
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+            integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+            integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+            integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+            crossorigin="anonymous"></script>
+    </body>
 </html>
