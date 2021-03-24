@@ -1,3 +1,7 @@
+# [v0.0.5](https://github.com/david-ghb/openclassrooms-emergency-system/compare/v0.0.4...v0.0.5) (2021-03-24)
+## Features
+- Add medicalrecords rest mapping
+
 # [v0.0.4](https://github.com/david-ghb/openclassrooms-emergency-system/compare/v0.0.3...v0.0.4) (2021-03-22)
 ## Features
 - Add front-end page designs
