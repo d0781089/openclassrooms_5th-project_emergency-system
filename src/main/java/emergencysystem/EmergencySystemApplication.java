@@ -14,7 +14,7 @@ public class EmergencySystemApplication extends WebMvcConfigurerAdapter {
 
 	@Override
 	public void addViewControllers(ViewControllerRegistry registry) {
-		registry.addRedirectViewController("/", "/firestations");
+		registry.addRedirectViewController("/", "/medicalrecords");
 	}
 
 }
