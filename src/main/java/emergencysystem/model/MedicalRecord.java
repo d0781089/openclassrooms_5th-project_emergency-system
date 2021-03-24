@@ -1,22 +1,21 @@
 package emergencysystem.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.List;
 
-//@Entity
+@Entity
 public class MedicalRecord {
 
-    //@Id
-    //@GeneratedValue(strategy= GenerationType.AUTO)
+    @Id
+    @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
     private String sort;
     private String firstName;
     private String lastName;
     private String birthDate;
+    @ElementCollection
     private List<String> medications;
+    @ElementCollection
     private List<String> allergies;
 
     public Long getId() {
@@ -55,7 +54,7 @@ public class MedicalRecord {
         return birthDate;
     }
 
-    public void setAddress(String birthDate) {
+    public void setBirthDate(String birthDate) {
         this.birthDate = birthDate;
     }
 
@@ -71,7 +70,7 @@ public class MedicalRecord {
         return allergies;
     }
 
-    public void setAllergies(List<String> email) {
-        this.allergies = email;
+    public void setAllergies(List<String> allergies) {
+        this.allergies = allergies;
     }
 }
