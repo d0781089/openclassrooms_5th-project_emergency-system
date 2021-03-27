@@ -3,7 +3,11 @@ package emergencysystem.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import emergencysystem.model.Person;
+import emergencysystem.util.PersonRepository;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -60,5 +64,10 @@ class JsonServiceTest {
         JsonNode jsonNode = JsonService.toJson(person);
 
         assertEquals(JsonService.stringify(jsonNode, false), jsonTestString);
+    }
+
+    @Test
+    void loadJsonData() throws IOException {
+        JsonService.loadJsonData(Person);
     }
 }

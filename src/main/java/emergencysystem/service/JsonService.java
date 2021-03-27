@@ -3,6 +3,14 @@ package emergencysystem.service;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.*;
+import emergencysystem.model.Person;
+import emergencysystem.util.FireStationRepository;
+import emergencysystem.util.MedicalRecordRepository;
+import emergencysystem.util.PersonRepository;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
 
 public class JsonService {
 
@@ -34,5 +42,9 @@ public class JsonService {
             objectWriter = objectWriter.with(SerializationFeature.INDENT_OUTPUT);
         }
         return objectWriter.writeValueAsString(jsonNode);
+    }
+
+    public static <classTargeted> void loadJsonData(Class<classTargeted> classTargeted) throws IOException {
+        objectMapper.readValue(new File("src/main/resources/data.json"), classTargeted);
     }
 }
