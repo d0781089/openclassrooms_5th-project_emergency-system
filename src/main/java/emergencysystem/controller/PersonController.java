@@ -9,8 +9,7 @@ import emergencysystem.util.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -62,4 +61,28 @@ public class PersonController {
         return "redirect:/persons";
     }
 
+    @PutMapping("/persons/{id}")
+    Person updatePerson(@RequestBody Person newPerson, @PathVariable Long id) {
+
+        return personRepository.findById(id)
+                .map(person -> {
+                    person.setFirstName(newPerson.getFirstName());
+                    person.setLastName(newPerson.getLastName());
+                    person.setAddress(newPerson.getAddress());
+                    person.setCity(newPerson.getCity());
+                    person.setZip(newPerson.getZip());
+                    person.setPhone(newPerson.getPhone());
+                    person.setEmail(newPerson.getEmail());
+                    return personRepository.save(person);
+                })
+                .orElseGet(() -> {
+                    newPerson.setId(id);
+                    return personRepository.save(newPerson);
+                });
+    }
+
+    @DeleteMapping("/persons/{id}")
+    void deletePerson(@PathVariable Long id) {
+        personRepository.deleteById(id);
+    }
 }
