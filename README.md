@@ -1,7 +1,7 @@
 <!-- PROJECT SHIELDS -->
+[![Maven][maven-shield]][maven-url]
 [![Spring Boot][springboot-shield]][springboot-url]
 [![JDK][jdk-shield]][jdk-url]
-[![Maven][maven-shield]][maven-url]
 
 
 
