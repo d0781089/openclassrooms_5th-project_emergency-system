@@ -39,15 +39,8 @@
         <li><a href="#built-with">Built With</a></li>
       </ul>
     </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><i>Comming soon...</i></li>
-      </ul>
-    </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#contact">Contact</a></li>
     <li><a href="#acknowledgements">Acknowledgements</a></li>
+    <li><a href="#contact">Contact</a></li>
   </ol>
 </details>
 
@@ -70,32 +63,6 @@ This project was built with:
 * [Java Development Kit]([jdk-url]) (v11.0.11)
 * [Maven Project]([maven-url])
 
-<!-- GETTING STARTED -->
-
-## Getting Started
-
-```Java
-// Comming soon...
-```
-
-<!-- USAGE EXAMPLES -->
-
-## Usage
-
-```Java
-// Comming soon...
-```
-
-<!-- CONTACT -->
-
-## Contact
-
-David - [Mail me here!](mailto:rocambin@gmail.com)
-
-[» Project Link](https://bitbucket.org/david-bbc/openclassrooms-emergency-system)
-
-
-
 <!-- ACKNOWLEDGEMENTS -->
 
 ## Acknowledgements
@@ -105,6 +72,14 @@ David - [Mail me here!](mailto:rocambin@gmail.com)
 * [Endpoints](https://s3-eu-west-1.amazonaws.com/course.oc-static.com/projects/DAJava_P5/Endpoints.pdf)
 * [URLs](https://s3-eu-west-1.amazonaws.com/course.oc-static.com/projects/DAJava_P5/URLs.pdf)
 * [JSON data](https://s3-eu-west-1.amazonaws.com/course.oc-static.com/projects/DA+Java+EN/P5+/data.json)
+
+<!-- CONTACT -->
+
+## Contact
+
+David - [Mail me here!](mailto:rocambin@gmail.com)
+
+[» Project Link](https://bitbucket.org/david-bbc/openclassrooms-emergency-system)
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
