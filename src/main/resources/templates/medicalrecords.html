@@ -17,8 +17,8 @@
             <div class="overflow-auto fire-stations-list card-box">
                 <h2 style="text-align: center">Tout afficher</h2>
                 <hr/>
-                <div th:unless="${#lists.isEmpty(medicalrecords)}">
-                    <dl th:each="medicalRecord : ${medicalrecords}">
+                <div th:unless="${#lists.isEmpty(medicalRecords)}">
+                    <dl th:each="medicalRecord : ${medicalRecords}">
                         <dt class="medicalRecordHeadline">
                             <span th:text="${medicalRecord.firstName}">firstName</span>
                             <span th:text="${medicalRecord.lastName}">lastName</span>
@@ -43,7 +43,7 @@
                         </dd>
                     </dl>
                 </div>
-                <div th:if="${#lists.isEmpty(medicalrecords)}">
+                <div th:if="${#lists.isEmpty(medicalRecords)}">
                     <small class="form-text text-muted">La liste ne présente aucun dossier...</small>
                 </div>
             </div>

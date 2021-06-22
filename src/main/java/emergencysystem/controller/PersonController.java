@@ -53,11 +53,11 @@ public class PersonController {
         personRepository.save(person);
 
         // With rewrite
-        JsonData jsonData = new JsonData();
-        jsonData = JsonService.getData(jsonData);
-        jsonData.setPersons(personRepository.findAll());
-        JsonNode jsonNode = JsonService.toJson(jsonData);
-        System.out.println(JsonService.stringify(jsonNode, true));
+        //JsonData jsonData = new JsonData();
+        //jsonData = JsonService.getData(jsonData);
+        //jsonData.setPersons(personRepository.findAll());
+        //JsonNode jsonNode = JsonService.toJson(jsonData);
+        //System.out.println(JsonService.stringify(jsonNode, true));
 
         return "redirect:/persons";
     }

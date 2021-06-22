@@ -5,8 +5,8 @@ import java.util.List;
 public class JsonData {
 
     List<Person> persons;
-    List<FireStation> firestations;
-    List<MedicalRecord> medicalrecords;
+    List<FireStation> fireStations;
+    List<MedicalRecord> medicalRecords;
 
     public List<Person> getPersons() {
         return persons;
@@ -16,19 +16,19 @@ public class JsonData {
         this.persons = persons;
     }
 
-    public List<FireStation> getFirestations() {
-        return firestations;
+    public List<FireStation> getFireStations() {
+        return fireStations;
     }
 
-    public void setFirestations(List<FireStation> firestations) {
-        this.firestations = firestations;
+    public void setFireStations(List<FireStation> fireStations) {
+        this.fireStations = fireStations;
     }
 
-    public List<MedicalRecord> getMedicalrecords() {
-        return medicalrecords;
+    public List<MedicalRecord> getMedicalRecords() {
+        return medicalRecords;
     }
 
-    public void setMedicalrecords(List<MedicalRecord> medicalrecords) {
-        this.medicalrecords = medicalrecords;
+    public void setMedicalRecords(List<MedicalRecord> medicalRecords) {
+        this.medicalRecords = medicalRecords;
     }
 }
