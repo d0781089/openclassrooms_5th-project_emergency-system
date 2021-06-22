@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import java.util.List;
 
 @Controller
-@RequestMapping("/firestations")
+@RequestMapping("/fireStations")
 public class FireStationController {
 
     private static final String sort = "all";
@@ -28,16 +28,16 @@ public class FireStationController {
 
         List<FireStation> fireStations = fireStationRepository.findBySort(sort);
         if (fireStations != null) {
-            model.addAttribute("firestations", fireStations);
+            model.addAttribute("fireStations", fireStations);
         }
-        return "firestations";
+        return "fireStations";
     }
 
     @RequestMapping(method=RequestMethod.POST)
     public String addToFireStationsList(FireStation fireStation) {
         fireStation.setSort(sort);
         fireStationRepository.save(fireStation);
-        return "redirect:/firestations";
+        return "redirect:/fireStations";
     }
 
 }

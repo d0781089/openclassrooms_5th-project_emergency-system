@@ -3,18 +3,18 @@ package emergencysystem.service;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.*;
+import emergencysystem.model.JsonData;
 import emergencysystem.model.Person;
-import emergencysystem.util.FireStationRepository;
-import emergencysystem.util.MedicalRecordRepository;
 import emergencysystem.util.PersonRepository;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 public class JsonService {
 
-    private static ObjectMapper objectMapper = getDefaultObjectMapper();
+    public static ObjectMapper objectMapper = getDefaultObjectMapper();
 
     private static ObjectMapper getDefaultObjectMapper() {
         ObjectMapper defaultObjectMapper = new ObjectMapper();
@@ -44,7 +44,11 @@ public class JsonService {
         return objectWriter.writeValueAsString(jsonNode);
     }
 
-    public static <classTargeted> void loadJsonData(Class<classTargeted> classTargeted) throws IOException {
-        objectMapper.readValue(new File("src/main/resources/data.json"), classTargeted);
+    public static JsonData getData(JsonData jsonData) throws IOException {
+        String file = "src/main/resources/data.json";
+        String json = new String(Files.readAllBytes(Paths.get(file)));
+        JsonNode jsonNode = JsonService.parse(json);
+        jsonData = JsonService.fromJson(jsonNode, JsonData.class);
+        return jsonData;
     }
 }

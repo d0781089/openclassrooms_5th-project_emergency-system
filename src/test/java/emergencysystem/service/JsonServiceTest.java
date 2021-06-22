@@ -2,11 +2,14 @@ package emergencysystem.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import emergencysystem.model.JsonData;
 import emergencysystem.model.Person;
 import emergencysystem.util.PersonRepository;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,14 +25,14 @@ class JsonServiceTest {
             "\"email\":\"hpotter@mail.co.uk\"}";
 
     @Test
-    void parse() throws JsonProcessingException {
+    void shouldParseJson() throws JsonProcessingException {
         JsonNode jsonNode = JsonService.parse(jsonTestString);
 
         assertEquals(jsonNode.get("firstName").asText(), "Harry");
     }
 
     @Test
-    void fromJson() throws JsonProcessingException {
+    void shouldStoreJsonInModel() throws JsonProcessingException {
         JsonNode jsonNode = JsonService.parse(jsonTestString);
         Person person = JsonService.fromJson(jsonNode, Person.class);
 
@@ -37,7 +40,7 @@ class JsonServiceTest {
     }
 
     @Test
-    void toJson() {
+    void shouldParseToJson() {
         Person person = new Person();
         person.setFirstName("Harry");
         person.setLastName("POTTER");
@@ -52,7 +55,7 @@ class JsonServiceTest {
     }
 
     @Test
-    void stringify() throws JsonProcessingException {
+    void shouldStringify() throws JsonProcessingException {
         Person person = new Person();
         person.setFirstName("Harry");
         person.setLastName("POTTER");
@@ -67,7 +70,12 @@ class JsonServiceTest {
     }
 
     @Test
-    void loadJsonData() throws IOException {
-        JsonService.loadJsonData(Person);
+    void shouldReadFromJsonFile() throws IOException {
+        String file = "src/main/resources/data.json";
+        String json = new String(Files.readAllBytes(Paths.get(file)));
+        JsonNode jsonNode = JsonService.parse(json);
+        JsonData jsonData = JsonService.fromJson(jsonNode, JsonData.class);
+
+        assertEquals(jsonData.getPersons().get(0).getFirstName(), "John");
     }
 }

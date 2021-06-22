@@ -19,8 +19,8 @@
                     <div class="overflow-auto fire-stations-list card-box">
                         <h2 style="text-align: center">Tout afficher</h2>
                         <hr/>
-                        <div th:unless="${#lists.isEmpty(firestations)}">
-                            <dl th:each="fireStation : ${firestations}">
+                        <div th:unless="${#lists.isEmpty(fireStations)}">
+                            <dl th:each="fireStation : ${fireStations}">
                                 <dt class="fireStationHeadline">
                                     <span th:text="'Caserne de pompiers n°' + ${fireStation.station}">station</span>
                                 </dt>
@@ -32,7 +32,7 @@
                                 </dd>
                             </dl>
                         </div>
-                        <div th:if="${#lists.isEmpty(firestations)}">
+                        <div th:if="${#lists.isEmpty(fireStations)}">
                             <small class="form-text text-muted">La liste ne présente aucune station...</small>
                         </div>
                     </div>
