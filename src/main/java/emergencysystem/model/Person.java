@@ -20,7 +20,7 @@ public class Person {
     @GeneratedValue
     private Long id;
 
-    private String sort;
+    //private String sort;
     private String firstName;
     private String lastName;
     private String address;
@@ -29,7 +29,7 @@ public class Person {
     private String phone;
     private String email;
 
-    public Long getId() {
+    /*public Long getId() {
         return id;
     }
 
@@ -97,5 +97,5 @@ public class Person {
 
     public void setEmail(String email) {
         this.email = email;
-    }
+    }*/
 }

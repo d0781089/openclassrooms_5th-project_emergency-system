@@ -39,7 +39,7 @@ public class PersonController {
         return personService.createPersons(persons);
     }
 
-    @GetMapping("/person/{id}")
+    @GetMapping("/persons/{id}")
     public Person getPersonById(@PathVariable Long id) {
 
         return personService.getPersonById(id);
