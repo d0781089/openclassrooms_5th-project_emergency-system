@@ -39,8 +39,8 @@ public class PersonService {
         Optional<Person> optionalPerson=personRepository.findById(person.getId());
         if(optionalPerson.isPresent()) {
             personToUpdate=optionalPerson.get();
-            personToUpdate.setFirstName(person.getFirstName());
-            personToUpdate.setLastName(person.getLastName());
+            //personToUpdate.setFirstName(person.getFirstName());
+            //personToUpdate.setLastName(person.getLastName());
             personToUpdate.setAddress(person.getAddress());
             personToUpdate.setCity(person.getCity());
             personToUpdate.setZip(person.getZip());
