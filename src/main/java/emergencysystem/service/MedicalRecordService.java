@@ -19,7 +19,7 @@ public class MedicalRecordService {
         return medicalRecordRepository.save(medicalRecord);
     }
 
-    public List<MedicalRecord> createMedicalRecord(List<MedicalRecord> medicalRecords) {
+    public List<MedicalRecord> createMedicalRecords(List<MedicalRecord> medicalRecords) {
 
         return medicalRecordRepository.saveAll(medicalRecords);
     }

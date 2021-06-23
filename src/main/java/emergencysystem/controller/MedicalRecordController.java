@@ -1,23 +1,55 @@
 package emergencysystem.controller;
 
-import emergencysystem.model.JsonData;
 import emergencysystem.model.MedicalRecord;
-import emergencysystem.service.JsonService;
-import emergencysystem.dao.MedicalRecordRepository;
+import emergencysystem.service.MedicalRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController
 //@Controller
 //@RequestMapping("/medicalRecords")
 public class MedicalRecordController {
+
+    @Autowired
+    private MedicalRecordService medicalRecordService;
+
+    @PostMapping("/createMedicalRecord")
+    public MedicalRecord createMedicalRecord(@RequestBody MedicalRecord medicalRecord) {
+
+        return medicalRecordService.createMedicalRecord(medicalRecord);
+    }
+
+    @PostMapping("/createMedicalRecords")
+    public List<MedicalRecord> createMedicalRecord(@RequestBody List<MedicalRecord> medicalRecords) {
+
+        return medicalRecordService.createMedicalRecords(medicalRecords);
+    }
+
+    @GetMapping("/medicalRecord/{id}")
+    public MedicalRecord getMedicalRecordById(@PathVariable Long id) {
+
+        return medicalRecordService.getMedicalRecordById(id);
+    }
+
+    @GetMapping("/medicalRecords")
+    public List<MedicalRecord> getMedicalRecords() {
+
+        return medicalRecordService.getMedicalRecords();
+    }
+
+    @PutMapping("/updateMedicalRecord")
+    public MedicalRecord updateMedicalRecord(@RequestBody MedicalRecord medicalRecord) {
+
+        return medicalRecordService.updateMedicalRecord(medicalRecord);
+    }
+
+    @DeleteMapping("/medicalRecords/{id}")
+    public String deleteMedicalRecord(@PathVariable Long id) {
+
+        return medicalRecordService.deleteMedicalRecord(id);
+    }
 
     /*private static final String sort = "all";
 

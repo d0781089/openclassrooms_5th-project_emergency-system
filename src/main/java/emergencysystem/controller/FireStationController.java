@@ -1,23 +1,55 @@
 package emergencysystem.controller;
 
 import emergencysystem.model.FireStation;
-import emergencysystem.model.JsonData;
-import emergencysystem.service.JsonService;
-import emergencysystem.dao.FireStationRepository;
+import emergencysystem.service.FireStationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController
 //@Controller
 //@RequestMapping("/fireStations")
 public class FireStationController {
+
+    @Autowired
+    private FireStationService fireStationService;
+
+    @PostMapping("/createFireStation")
+    public FireStation createFireStation(@RequestBody FireStation fireStation) {
+
+        return fireStationService.createFireStation(fireStation);
+    }
+
+    @PostMapping("/createFireStations")
+    public List<FireStation> createFireStation(@RequestBody List<FireStation> fireStations) {
+
+        return fireStationService.createFireStations(fireStations);
+    }
+
+    @GetMapping("/fireStations/{id}")
+    public FireStation getFireStationById(@PathVariable Long id) {
+
+        return fireStationService.getFireStationById(id);
+    }
+
+    @GetMapping("/fireStations")
+    public List<FireStation> getFireStations() {
+
+        return fireStationService.getFireStations();
+    }
+
+    @PutMapping("/updateFireStation")
+    public FireStation updateFireStation(@RequestBody FireStation fireStation) {
+
+        return fireStationService.updateFireStation(fireStation);
+    }
+
+    @DeleteMapping("fireStations/{id}")
+    public String deleteFireStation(@PathVariable Long id) {
+
+        return fireStationService.deleteFireStation(id);
+    }
 
     /*private static final String sort = "all";
 

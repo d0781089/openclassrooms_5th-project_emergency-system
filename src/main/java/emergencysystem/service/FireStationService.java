@@ -19,7 +19,7 @@ public class FireStationService {
         return fireStationRepository.save(fireStation);
     }
 
-    public List<FireStation> createFireStation(List<FireStation> fireStations) {
+    public List<FireStation> createFireStations(List<FireStation> fireStations) {
 
         return fireStationRepository.saveAll(fireStations);
     }
