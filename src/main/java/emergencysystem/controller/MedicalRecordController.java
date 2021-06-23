@@ -9,15 +9,17 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.util.List;
 
-@Controller
-@RequestMapping("/medicalRecords")
+@RestController
+//@Controller
+//@RequestMapping("/medicalRecords")
 public class MedicalRecordController {
 
-    private static final String sort = "all";
+    /*private static final String sort = "all";
 
     JsonData jsonData = new JsonData();
     private MedicalRecordRepository medicalRecordRepository;
@@ -43,5 +45,5 @@ public class MedicalRecordController {
         medicalRecord.setSort(sort);
         medicalRecordRepository.save(medicalRecord);
         return "redirect:/medicalRecords";
-    }
+    }*/
 }

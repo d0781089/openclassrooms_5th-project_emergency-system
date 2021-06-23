@@ -36,11 +36,12 @@ public class PersonService {
 
     public Person updatePerson(Person person) {
         Person personToUpdate;
-        Optional<Person> optionalPerson=personRepository.findById(person.getId());
+        Optional<Person> optionalPerson = personRepository.findById(person.getId());
+
         if(optionalPerson.isPresent()) {
-            personToUpdate=optionalPerson.get();
-            //personToUpdate.setFirstName(person.getFirstName());
-            //personToUpdate.setLastName(person.getLastName());
+            personToUpdate = optionalPerson.get();
+            /*personToUpdate.setFirstName(person.getFirstName()); // Todo: First and Last names must not change
+            personToUpdate.setLastName(person.getLastName());*/
             personToUpdate.setAddress(person.getAddress());
             personToUpdate.setCity(person.getCity());
             personToUpdate.setZip(person.getZip());
@@ -57,6 +58,6 @@ public class PersonService {
 
         personRepository.deleteById(id);
 
-        return "The user was DELETED successfully!";
+        return "The person was DELETED successfully!";
     }
 }

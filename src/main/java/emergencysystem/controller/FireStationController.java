@@ -9,15 +9,17 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.util.List;
 
-@Controller
-@RequestMapping("/fireStations")
+@RestController
+//@Controller
+//@RequestMapping("/fireStations")
 public class FireStationController {
 
-    private static final String sort = "all";
+    /*private static final String sort = "all";
 
     JsonData jsonData = new JsonData();
     private FireStationRepository fireStationRepository;
@@ -43,6 +45,5 @@ public class FireStationController {
         fireStation.setSort(sort);
         fireStationRepository.save(fireStation);
         return "redirect:/fireStations";
-    }
-
+    }*/
 }
