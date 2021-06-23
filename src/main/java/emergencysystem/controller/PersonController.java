@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import emergencysystem.model.JsonData;
 import emergencysystem.model.Person;
 import emergencysystem.service.JsonService;
+import emergencysystem.service.PersonService;
 import emergencysystem.util.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,11 +19,49 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
-@Controller
-@RequestMapping("/persons")
+@RestController
+//@Controller
+//@RequestMapping("/persons")
 public class PersonController {
 
-    
+    @Autowired
+    private PersonService personService;
+
+    @PostMapping("/createPerson")
+    public Person createPerson(@RequestBody Person person) {
+
+        return personService.createPerson(person);
+    }
+
+    @PostMapping("/createPersons")
+    public List<Person> createPersons(@RequestBody List<Person> persons) {
+
+        return personService.createPersons(persons);
+    }
+
+    @GetMapping("/person/{id}")
+    public Person getPersonById(@PathVariable Long id) {
+
+        return personService.getPersonById(id);
+    }
+
+    @GetMapping("/persons")
+    public List<Person> getPersons() {
+
+        return personService.getPersons();
+    }
+
+    @PutMapping("/updatePerson")
+    public Person updatePerson(@RequestBody Person person) {
+
+        return personService.updatePerson(person);
+    }
+
+    @DeleteMapping("/deletePerson")
+    public String deletePersonById(@PathVariable Long id) {
+
+        return personService.deletePersonById(id);
+    }
 
     /*private static final String sort = "all";
     JsonData jsonData = new JsonData();

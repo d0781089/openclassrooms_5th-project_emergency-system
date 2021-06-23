@@ -29,7 +29,7 @@ public class PersonService {
         return personRepository.getById(id); // '.orElse(null)' may be deprecated
     }
 
-    public List<Person> getPersonById() {
+    public List<Person> getPersons() {
 
         return personRepository.findAll();
     }
@@ -53,7 +53,7 @@ public class PersonService {
         return personToUpdate;
     }
 
-    public String deletePerson(Long id) {
+    public String deletePersonById(Long id) {
 
         personRepository.deleteById(id);
 
