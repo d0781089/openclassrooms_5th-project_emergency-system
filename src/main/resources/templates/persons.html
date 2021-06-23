@@ -49,6 +49,10 @@
                                 <small class="form-text text-muted" th:if="${person.email eq null}">
                                     Aucun courriel</small>
                             </dd>
+                            <dd class="personInformation">
+                                <a method="PUT" class="btn btn-danger" style="background-color: #007bff; border-color: #007bff;color:white;margin: 3px;margin-right: 10px;">Modifier</a>
+                                <a method="DELETE" class="btn btn-danger" style="color:white;margin: 3px;">Supprimer</a>
+                            </dd>
                         </dl>
                     </div>
                     <div th:if="${#lists.isEmpty(persons)}">
