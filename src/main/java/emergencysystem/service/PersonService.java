@@ -57,6 +57,6 @@ public class PersonService {
 
         personRepository.deleteById(id);
 
-        return "The user of DELETED successfully!";
+        return "The user was DELETED successfully!";
     }
 }

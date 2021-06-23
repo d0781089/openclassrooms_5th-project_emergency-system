@@ -45,7 +45,7 @@ public class PersonController {
         return personService.updatePerson(person);
     }
 
-    @DeleteMapping("/deletePerson")
+    @DeleteMapping("/persons/{id}")
     public String deletePersonById(@PathVariable Long id) {
 
         return personService.deletePersonById(id);
