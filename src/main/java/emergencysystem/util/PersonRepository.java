@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface PersonRepository extends JpaRepository<Person, Long> {
 
-    List<Person> findBySort(String person);
+    //List<Person> findBySort(String person);
 }
