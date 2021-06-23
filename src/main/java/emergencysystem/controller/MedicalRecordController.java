@@ -27,7 +27,7 @@ public class MedicalRecordController {
         return medicalRecordService.createMedicalRecords(medicalRecords);
     }
 
-    @GetMapping("/medicalRecord/{id}")
+    @GetMapping("/medicalRecords/{id}")
     public MedicalRecord getMedicalRecordById(@PathVariable Long id) {
 
         return medicalRecordService.getMedicalRecordById(id);

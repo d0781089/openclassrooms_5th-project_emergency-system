@@ -43,6 +43,7 @@ public class FireStationService {
             fireStationToUpdate = optionalFireStation.get();
             //fireStationToUpdate.setStation(fireStation.getStation()); // Todo: Fire Station number must not change
             fireStationToUpdate.setAddress(fireStation.getAddress());
+            fireStationRepository.save(fireStationToUpdate);
         } else {
             return new FireStation();
         }

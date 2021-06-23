@@ -46,6 +46,7 @@ public class MedicalRecordService {
             medicalRecordToUpdate.setBirthDate(medicalRecord.getBirthDate());
             medicalRecordToUpdate.setMedications(medicalRecord.getMedications());
             medicalRecordToUpdate.setAllergies(medicalRecord.getAllergies());
+            medicalRecordRepository.save(medicalRecordToUpdate);
         } else {
             return new MedicalRecord();
         }
