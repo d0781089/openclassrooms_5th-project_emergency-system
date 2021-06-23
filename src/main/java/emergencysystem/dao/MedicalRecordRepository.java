@@ -1,4 +1,4 @@
-package emergencysystem.util;
+package emergencysystem.dao;
 
 import emergencysystem.model.MedicalRecord;
 import org.springframework.data.jpa.repository.JpaRepository;

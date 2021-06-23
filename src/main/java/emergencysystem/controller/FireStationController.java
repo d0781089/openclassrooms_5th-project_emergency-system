@@ -3,7 +3,7 @@ package emergencysystem.controller;
 import emergencysystem.model.FireStation;
 import emergencysystem.model.JsonData;
 import emergencysystem.service.JsonService;
-import emergencysystem.util.FireStationRepository;
+import emergencysystem.dao.FireStationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

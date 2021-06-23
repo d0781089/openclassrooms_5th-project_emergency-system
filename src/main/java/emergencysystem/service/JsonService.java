@@ -4,13 +4,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.*;
 import emergencysystem.model.JsonData;
-import emergencysystem.model.Person;
-import emergencysystem.util.PersonRepository;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
 
 public class JsonService {
 

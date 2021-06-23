@@ -3,7 +3,7 @@ package emergencysystem.controller;
 import emergencysystem.model.JsonData;
 import emergencysystem.model.MedicalRecord;
 import emergencysystem.service.JsonService;
-import emergencysystem.util.MedicalRecordRepository;
+import emergencysystem.dao.MedicalRecordRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

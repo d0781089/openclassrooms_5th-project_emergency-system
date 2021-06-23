@@ -1,7 +1,7 @@
 package emergencysystem.service;
 
 import emergencysystem.model.Person;
-import emergencysystem.util.PersonRepository;
+import emergencysystem.dao.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +26,7 @@ public class PersonService {
 
     public Person getPersonById(Long id) {
 
-        return personRepository.getById(id); // '.orElse(null)' may be deprecated
+        return personRepository.findById(id).get(); // 'personRepository.getById(id)': Error 500
     }
 
     public List<Person> getPersons() {

@@ -1,23 +1,11 @@
 package emergencysystem.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import emergencysystem.model.JsonData;
 import emergencysystem.model.Person;
-import emergencysystem.service.JsonService;
 import emergencysystem.service.PersonService;
-import emergencysystem.util.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 //@Controller
