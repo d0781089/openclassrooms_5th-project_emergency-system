@@ -1,6 +1,7 @@
 package emergencysystem.controller;
 
 import emergencysystem.model.FireStation;
+import emergencysystem.model.Person;
 import emergencysystem.service.FireStationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -49,6 +50,12 @@ public class FireStationController {
     public String deleteFireStation(@PathVariable Long id) {
 
         return fireStationService.deleteFireStation(id);
+    }
+
+    @GetMapping("fireStation?stationNumber={station}")
+    List<Person> getPersonsCoveredByFireStation(@PathVariable int station) {
+
+        return fireStationService.getPersonsCoveredByFireStation(station);
     }
 
     /*private static final String sort = "all";

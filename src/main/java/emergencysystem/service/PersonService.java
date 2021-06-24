@@ -60,4 +60,9 @@ public class PersonService {
 
         return "The person was DELETED successfully!";
     }
+
+    public List<Person> getPersonsByFireStationAddress(String fireStationAddress) {
+
+        return personRepository.findByFireStationAddress(fireStationAddress);
+    }
 }

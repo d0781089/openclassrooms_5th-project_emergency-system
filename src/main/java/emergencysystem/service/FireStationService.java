@@ -2,6 +2,7 @@ package emergencysystem.service;
 
 import emergencysystem.dao.FireStationRepository;
 import emergencysystem.model.FireStation;
+import emergencysystem.model.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,8 @@ public class FireStationService {
 
     @Autowired
     private FireStationRepository fireStationRepository;
+
+    private PersonService personService;
 
     public FireStation createFireStation(FireStation fireStation) {
 
@@ -55,5 +58,10 @@ public class FireStationService {
         fireStationRepository.deleteById(id);
 
         return "The fire station was DELETED successfully!";
+    }
+
+    public List<Person> getPersonsCoveredByFireStation(int station) {
+
+        return personService.getPersonsByFireStationAddress(fireStationRepository.getByStation(station).getAddress());
     }
 }
