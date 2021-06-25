@@ -4,7 +4,10 @@ import emergencysystem.model.FireStation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface FireStationRepository extends JpaRepository<FireStation, Long> {
-    FireStation getByStation(int station);
+
+    List<FireStation> getByStation(int station);
 }

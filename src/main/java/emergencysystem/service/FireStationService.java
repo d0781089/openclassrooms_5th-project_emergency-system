@@ -60,8 +60,9 @@ public class FireStationService {
         return "The fire station was DELETED successfully!";
     }
 
-    public List<Person> getPersonsCoveredByFireStation(int station) {
+    public List<FireStation> getPersonsCoveredByFireStation(int station) {
 
-        return personService.getPersonsByFireStationAddress(fireStationRepository.getByStation(station).getAddress());
+        //return personService.getPersonsByFireStationAddress(fireStationRepository.getByStation(station).getAddress());
+        return fireStationRepository.getByStation(station);
     }
 }

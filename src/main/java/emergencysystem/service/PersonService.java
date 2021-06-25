@@ -61,8 +61,8 @@ public class PersonService {
         return "The person was DELETED successfully!";
     }
 
-    public List<Person> getPersonsByFireStationAddress(String fireStationAddress) {
+    public List<Person> getPersonsByFireStationAddress(String address) {
 
-        return personRepository.findByFireStationAddress(fireStationAddress);
+        return personRepository.findByAddress(address);
     }
 }

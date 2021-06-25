@@ -34,6 +34,7 @@ public class FireStationController {
         return fireStationService.getFireStationById(id);
     }
 
+    // Todo: Move getPersonsCoveredByFireStation method here with condition later
     @GetMapping("/fireStations")
     public List<FireStation> getFireStations() {
 
@@ -46,14 +47,14 @@ public class FireStationController {
         return fireStationService.updateFireStation(fireStation);
     }
 
-    @DeleteMapping("fireStations/{id}")
+    @DeleteMapping("/fireStations/{id}")
     public String deleteFireStation(@PathVariable Long id) {
 
         return fireStationService.deleteFireStation(id);
     }
 
-    @GetMapping("fireStation?stationNumber={station}")
-    List<Person> getPersonsCoveredByFireStation(@PathVariable int station) {
+    @GetMapping("/fireStation")
+    List<FireStation> getPersonsCoveredByFireStation(@RequestParam int station) {
 
         return fireStationService.getPersonsCoveredByFireStation(station);
     }
