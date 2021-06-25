@@ -54,7 +54,7 @@ public class FireStationController {
     }
 
     @GetMapping("/fireStation")
-    List<FireStation> getPersonsCoveredByFireStation(@RequestParam int station) {
+    List<Person> getPersonsCoveredByFireStation(@RequestParam int station) {
 
         return fireStationService.getPersonsCoveredByFireStation(station);
     }

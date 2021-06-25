@@ -63,6 +63,6 @@ public class PersonService {
 
     public List<Person> getPersonsByFireStationAddress(String address) {
 
-        return personRepository.findByAddress(address);
+        return personRepository.getByAddress(address);
     }
 }

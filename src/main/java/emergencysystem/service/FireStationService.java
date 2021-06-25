@@ -1,6 +1,7 @@
 package emergencysystem.service;
 
 import emergencysystem.dao.FireStationRepository;
+import emergencysystem.dao.PersonRepository;
 import emergencysystem.model.FireStation;
 import emergencysystem.model.Person;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,9 @@ public class FireStationService {
 
     @Autowired
     private FireStationRepository fireStationRepository;
+
+    @Autowired
+    private PersonRepository personRepository;
 
     private PersonService personService;
 
@@ -60,9 +64,8 @@ public class FireStationService {
         return "The fire station was DELETED successfully!";
     }
 
-    public List<FireStation> getPersonsCoveredByFireStation(int station) {
+    public List<Person> getPersonsCoveredByFireStation(int station) {
 
-        //return personService.getPersonsByFireStationAddress(fireStationRepository.getByStation(station).getAddress());
-        return fireStationRepository.getByStation(station);
+        return personService.getPersonsByFireStationAddress(fireStationRepository.getByStation(station).getAddress());
     }
 }
