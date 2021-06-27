@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 //@Controller
@@ -54,7 +55,7 @@ public class FireStationController {
     }
 
     @GetMapping("/fireStation")
-    List<Person> getPersonsCoveredByFireStation(@RequestParam int station) {
+    Map<String, List<Person>> getPersonsCoveredByFireStation(@RequestParam int station) {
 
         return fireStationService.getPersonsCoveredByFireStation(station);
     }

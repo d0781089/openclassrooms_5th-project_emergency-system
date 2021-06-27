@@ -1,7 +1,6 @@
 package emergencysystem.service;
 
 import emergencysystem.dao.FireStationRepository;
-import emergencysystem.dao.PersonRepository;
 import emergencysystem.model.FireStation;
 import emergencysystem.model.Person;
 import org.apache.logging.log4j.LogManager;
@@ -9,7 +8,9 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -20,6 +21,9 @@ public class FireStationService {
 
     @Autowired
     private PersonService personService;
+
+    @Autowired
+    private MedicalRecordService medicalRecordService;
 
     private static final Logger logger = LogManager.getLogger(FireStationService.class);
 
@@ -66,11 +70,18 @@ public class FireStationService {
         return "The fire station was DELETED successfully!";
     }
 
-    public List<Person> getPersonsCoveredByFireStation(int station) {
+    public Map<String, List<Person>> getPersonsCoveredByFireStation(int station) {
 
-        String fireStationAddress = fireStationRepository.getByStation(station).getAddress();
         logger.debug("[Persons list covered by the firestation] Given station number: " + station);
 
-        return personService.getPersonsByFireStationAddress(fireStationAddress);
+        String fireStationAddress = fireStationRepository.getByStation(station).getAddress();
+        List<Person> personsCovered = personService.getPersonsByFireStationAddress(fireStationAddress);
+        Map<String, Integer> numberOfChildrenAndAdults = medicalRecordService.getNumberOfChildrenAndAdults(personsCovered);
+        Map<String, List<Person>> result = new HashMap<String, List<Person>>();
+        result.put("Le résultat de cette recherche est composé de " + numberOfChildrenAndAdults.get("children") +
+                " enfant(s) et " + numberOfChildrenAndAdults.get("adults") +
+                " adulte(s).\nListe des personnes couvertent par la caserne n°" + station, personsCovered);
+
+        return result;
     }
 }

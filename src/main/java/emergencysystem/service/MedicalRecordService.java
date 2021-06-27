@@ -3,10 +3,14 @@ package emergencysystem.service;
 import emergencysystem.dao.MedicalRecordRepository;
 import emergencysystem.model.MedicalRecord;
 import emergencysystem.model.Person;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -14,6 +18,8 @@ public class MedicalRecordService {
 
     @Autowired
     private MedicalRecordRepository medicalRecordRepository;
+
+    private static final Logger logger = LogManager.getLogger(MedicalRecordService.class);
 
     public MedicalRecord createMedicalRecord(MedicalRecord medicalRecord) {
 
@@ -59,5 +65,16 @@ public class MedicalRecordService {
         medicalRecordRepository.deleteById(id);
 
         return "The medical record was DELETED successfully!";
+    }
+
+    public Map<String, Integer> getNumberOfChildrenAndAdults(List<Person> persons) {
+
+        logger.debug("[Persons list covered by the firestation] Retrieved covered persons: " + persons);
+
+        Map<String, Integer> numberOfChildrenAndAdults = new HashMap<String, Integer>();
+        numberOfChildrenAndAdults.put("children", medicalRecordRepository.countByBirthDateLessThanEqual(18));
+        numberOfChildrenAndAdults.put("adults", medicalRecordRepository.countByBirthDateGreaterThanEqual(18));
+
+        return numberOfChildrenAndAdults;
     }
 }
