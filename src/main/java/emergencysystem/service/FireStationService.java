@@ -4,6 +4,8 @@ import emergencysystem.dao.FireStationRepository;
 import emergencysystem.dao.PersonRepository;
 import emergencysystem.model.FireStation;
 import emergencysystem.model.Person;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,9 +19,9 @@ public class FireStationService {
     private FireStationRepository fireStationRepository;
 
     @Autowired
-    private PersonRepository personRepository;
-
     private PersonService personService;
+
+    private static final Logger logger = LogManager.getLogger(FireStationService.class);
 
     public FireStation createFireStation(FireStation fireStation) {
 
@@ -66,6 +68,9 @@ public class FireStationService {
 
     public List<Person> getPersonsCoveredByFireStation(int station) {
 
-        return personService.getPersonsByFireStationAddress(fireStationRepository.getByStation(station).getAddress());
+        String fireStationAddress = fireStationRepository.getByStation(station).getAddress();
+        logger.debug("[Persons list covered by the firestation] Given station number: " + station);
+
+        return personService.getPersonsByFireStationAddress(fireStationAddress);
     }
 }

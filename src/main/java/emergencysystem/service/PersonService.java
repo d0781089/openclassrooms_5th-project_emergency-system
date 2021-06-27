@@ -2,6 +2,8 @@ package emergencysystem.service;
 
 import emergencysystem.model.Person;
 import emergencysystem.dao.PersonRepository;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +15,8 @@ public class PersonService {
 
     @Autowired
     private PersonRepository personRepository;
+
+    private static final Logger logger = LogManager.getLogger(PersonService.class);
 
     public Person createPerson(Person person) {
 
@@ -62,6 +66,8 @@ public class PersonService {
     }
 
     public List<Person> getPersonsByFireStationAddress(String address) {
+
+        logger.debug("[Persons list covered by the firestation] Retrieved fire station address: " + address);
 
         return personRepository.getByAddress(address);
     }
