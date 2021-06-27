@@ -21,7 +21,7 @@ public class MedicalRecord {
 
     private String firstName;
     private String lastName;
-    
+
     @DateTimeFormat
     private String birthDate;
 

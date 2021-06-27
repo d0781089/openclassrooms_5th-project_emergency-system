@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,8 +73,11 @@ public class MedicalRecordService {
         logger.debug("[Persons list covered by the firestation] Retrieved covered persons: " + persons);
 
         Map<String, Integer> numberOfChildrenAndAdults = new HashMap<String, Integer>();
-        numberOfChildrenAndAdults.put("children", medicalRecordRepository.countByBirthDateLessThanEqual(18));
-        numberOfChildrenAndAdults.put("adults", medicalRecordRepository.countByBirthDateGreaterThanEqual(18));
+        String minimumBirthDateRequired = LocalDate.now().minusYears(18).toString();
+        numberOfChildrenAndAdults.put("children", medicalRecordRepository
+                .countByBirthDateAfter(minimumBirthDateRequired));
+        numberOfChildrenAndAdults.put("adults", medicalRecordRepository
+                .countByBirthDateBeforeOrBirthDateEquals(minimumBirthDateRequired,minimumBirthDateRequired));
 
         return numberOfChildrenAndAdults;
     }

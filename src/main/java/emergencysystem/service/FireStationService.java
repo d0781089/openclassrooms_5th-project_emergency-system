@@ -76,11 +76,14 @@ public class FireStationService {
 
         String fireStationAddress = fireStationRepository.getByStation(station).getAddress();
         List<Person> personsCovered = personService.getPersonsByFireStationAddress(fireStationAddress);
-        Map<String, Integer> numberOfChildrenAndAdults = medicalRecordService.getNumberOfChildrenAndAdults(personsCovered);
+        Map<String, Integer> numberOfChildrenAndAdults = medicalRecordService
+                .getNumberOfChildrenAndAdults(personsCovered);
+        logger.debug("[Persons list covered by the firestation] Accountability: " + numberOfChildrenAndAdults);
+
         Map<String, List<Person>> result = new HashMap<String, List<Person>>();
-        result.put("Le résultat de cette recherche est composé de " + numberOfChildrenAndAdults.get("children") +
-                " enfant(s) et " + numberOfChildrenAndAdults.get("adults") +
-                " adulte(s).\nListe des personnes couvertent par la caserne n°" + station, personsCovered);
+        result.put("Liste des personnes couvertent par la caserne n°" + station + " comportant "
+                + numberOfChildrenAndAdults.get("children") + " enfant(s) et "
+                + numberOfChildrenAndAdults.get("adults") + " adulte(s):", personsCovered);
 
         return result;
     }
