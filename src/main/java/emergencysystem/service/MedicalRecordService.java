@@ -120,7 +120,7 @@ public class MedicalRecordService {
         return numberOfChildrenAndAdults;
     }
 
-    public Map<String, Map<String, Map<String, String>>> getChildrenByAddress(String address) {
+    public Map<String, Map<String, Map<Integer, Map<String, String>>>> getChildrenByAddress(String address) {
 
         //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         Date minimumBirthDateRequired = Date.valueOf(LocalDate.now().minusYears(18)); //.format(formatter));
@@ -157,29 +157,40 @@ public class MedicalRecordService {
 
         logger.debug("[CHILD-ALERT] Adults medical records: " + adultsListFiltered);
 
-        Map<String, String> childrenResult = new TreeMap<>();
+        Map<Integer, Map<String, String>> childrenResult = new TreeMap<>();
+        Map<Integer, Map<String, String>> adultsResult = new TreeMap<>();
+
         for(MedicalRecord m : childrenListFiltered) {
-            childrenResult.put("Prénom", m.getFirstName());
-            childrenResult.put("Nom", m.getLastName());
-           // childrenResult.put("Âge", Period.between(LocalDate., LocalDate.now()).getYears());
+            Map<String, String> childData = new TreeMap<>();
+            childData.put("Nom", m.getLastName());
+            childData.put("Prénom", m.getFirstName());
+            childData.put("Âge", String.valueOf(Period.between(m.getBirthDate().toLocalDate(), LocalDate.now()).getYears()));
+            childrenResult.put(childrenResult.size() + 1, childData);
         }
 
-        Map<String, String> adultsResult = new TreeMap<>();
+        logger.debug("[CHILD-ALERT] Children data: " + childrenResult);
+
         for(MedicalRecord m : adultsListFiltered) {
-            childrenResult.put("Prénom", m.getFirstName());
-            childrenResult.put("Nom", m.getLastName());
-            //childrenResult.put("Âge", Period.between(LocalDate., LocalDate.now()).getYears());
+            Map<String, String> adultData = new TreeMap<>();
+            adultData.clear();
+            adultData.put("Nom", m.getLastName());
+            adultData.put("Prénom", m.getFirstName());
+            adultData.put("Âge", String.valueOf(Period.between(m.getBirthDate().toLocalDate(), LocalDate.now()).getYears()));
+            logger.debug("[CHILD-ALERT] Single adult data: " + adultData);
+            adultsResult.put(adultsResult.size() + 1, adultData);
         }
 
-        Map<String, Map<String, String>> resultList = new TreeMap<>();
+        logger.debug("[CHILD-ALERT] Adults data: " + adultsResult);
+
+        Map<String, Map<Integer, Map<String, String>>> resultList = new TreeMap<>();
         resultList.put("Enfant(s)", childrenResult);
         resultList.put("Reste du foyer", adultsResult);
 
         /*Map<String, Map<String, List<MedicalRecord>>> users = new TreeMap<>();
         users.put("adults", resultList);*/
 
-        Map<String, Map<String, Map<String, String>>> result =
-                new HashMap<String, Map<String, Map<String, String>>>();
+        Map<String, Map<String, Map<Integer, Map<String, String>>>> result =
+                new HashMap<String, Map<String, Map<Integer, Map<String, String>>>>();
         result.put("Liste des enfants couverent par l'adresse : " + address + " comportant "
                 + childrenListFiltered.size() + " enfant(s) et " + adultsListFiltered.size()
                 + " adulte(s)", resultList);
