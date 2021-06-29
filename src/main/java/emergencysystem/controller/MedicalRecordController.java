@@ -54,7 +54,7 @@ public class MedicalRecordController {
     }
 
     @GetMapping("/childAlert")
-    public Map<String, Map<String, List<MedicalRecord>>> getChildrenByAddress(@RequestParam String address) {
+    public Map<String, Map<String, Map<String, String>>> getChildrenByAddress(@RequestParam String address) {
 
         return medicalRecordService.getChildrenByAddress(address);
     }
