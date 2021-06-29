@@ -1,11 +1,13 @@
 package emergencysystem.controller;
 
 import emergencysystem.model.MedicalRecord;
+import emergencysystem.model.Person;
 import emergencysystem.service.MedicalRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 //@Controller
@@ -50,6 +52,12 @@ public class MedicalRecordController {
 
         return medicalRecordService.deleteMedicalRecord(id);
     }
+
+    /*@GetMapping("/childAlert")
+    public Map<Map<String, List<Person>>, Map<String, List<Person>>> getChildrenByAddress(@RequestParam String address) {
+
+        return getChildrenByAddress(address);
+    }*/
 
     /*private static final String sort = "all";
 

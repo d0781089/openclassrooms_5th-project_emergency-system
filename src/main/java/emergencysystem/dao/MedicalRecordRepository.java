@@ -10,6 +10,9 @@ import java.util.List;
 @Repository
 public interface MedicalRecordRepository extends JpaRepository<MedicalRecord, Long> {
 
-    int countByBirthDateBeforeOrBirthDateEquals(String birthDate, String birthDate2);
-    int countByBirthDateAfter(String birthDate);
+    List<MedicalRecord> getByBirthDateBeforeOrBirthDateEquals(String birthDate, String birthDate2);
+    List<MedicalRecord> getByBirthDateAfter(String birthDate);
+
+    /*List<Person> getByBirthDateBeforeOrBirthDateEquals(List<Person> persons);
+    List<Person> getByBirthDateAfter(List<Person> persons);*/
 }

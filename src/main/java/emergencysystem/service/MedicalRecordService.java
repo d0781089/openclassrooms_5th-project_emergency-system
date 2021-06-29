@@ -9,10 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class MedicalRecordService {
@@ -20,7 +18,11 @@ public class MedicalRecordService {
     @Autowired
     private MedicalRecordRepository medicalRecordRepository;
 
+    @Autowired
+    private PersonService personService;
+
     private static final Logger logger = LogManager.getLogger(MedicalRecordService.class);
+    private String minimumBirthDateRequired = LocalDate.now().minusYears(18).toString();
 
     public MedicalRecord createMedicalRecord(MedicalRecord medicalRecord) {
 
@@ -49,7 +51,7 @@ public class MedicalRecordService {
 
         if(medicalRecordOptional.isPresent()) {
             medicalRecordToUpdate = medicalRecordOptional.get();
-            /*medicalRecordToUpdate.setFirstName(medicalRecord.getFirstName()); // Todo: First and Last names must not change
+            /*medicalRecordToUpdate.setFirstName(medicalRecord.getFirstName()); // Todo: First/Last names must not change
             medicalRecordToUpdate.setLastName(medicalRecord.getLastName());*/
             medicalRecordToUpdate.setBirthDate(medicalRecord.getBirthDate());
             medicalRecordToUpdate.setMedications(medicalRecord.getMedications());
@@ -73,12 +75,49 @@ public class MedicalRecordService {
         logger.debug("[Persons list covered by the firestation] Retrieved covered persons: " + persons);
 
         Map<String, Integer> numberOfChildrenAndAdults = new HashMap<String, Integer>();
-        String minimumBirthDateRequired = LocalDate.now().minusYears(18).toString();
-        numberOfChildrenAndAdults.put("children", medicalRecordRepository
-                .countByBirthDateAfter(minimumBirthDateRequired));
-        numberOfChildrenAndAdults.put("adults", medicalRecordRepository
-                .countByBirthDateBeforeOrBirthDateEquals(minimumBirthDateRequired,minimumBirthDateRequired));
+
+        List<MedicalRecord> childrenList = medicalRecordRepository.getByBirthDateAfter(minimumBirthDateRequired);
+        logger.debug("[Persons list covered by the firestation] Children medical records: " + childrenList);
+
+        List<MedicalRecord> adultsList = medicalRecordRepository
+                .getByBirthDateBeforeOrBirthDateEquals(minimumBirthDateRequired, minimumBirthDateRequired);
+        logger.debug("[Persons list covered by the firestation] Adults medical records: " + adultsList);
+
+        Set<String> medicalRecordFirstNames = persons.stream()
+                .map(Person::getFirstName)
+                .collect(Collectors.toSet());
+
+        Set<String> medicalRecordLastNames = persons.stream()
+                .map(Person::getLastName)
+                .collect(Collectors.toSet());
+
+        List<MedicalRecord> childrenListFiltered =
+                childrenList.stream().filter(s -> medicalRecordFirstNames.contains(s.getFirstName()))
+                        .filter(s -> medicalRecordLastNames.contains(s.getLastName()))
+                        .collect(Collectors.toList());
+
+        logger.debug("[Persons list covered by the firestation] Filtered children list: " + childrenListFiltered);
+
+        List<MedicalRecord> adultsListFiltered =
+                adultsList.stream().filter(s -> medicalRecordFirstNames.contains(s.getFirstName()))
+                        .filter(s -> medicalRecordLastNames.contains(s.getLastName()))
+                        .collect(Collectors.toList());
+
+        logger.debug("[Persons list covered by the firestation] Filtered adults list: " + adultsListFiltered);
+
+        numberOfChildrenAndAdults.put("children", childrenListFiltered.size());
+        numberOfChildrenAndAdults.put("adults", adultsListFiltered.size());
 
         return numberOfChildrenAndAdults;
     }
+
+    /*public Map<Map<String, List<Person>>, Map<String, List<Person>>> getChildrenByAddress(String address) {
+
+        List<Person> personsCovered = personService.getPersonsByAddress(address);
+
+        logger.debug("[Children list covered by the address] Retrieved covered persons: " + personsCovered);
+
+        List<Person> childrenCovered = medicalRecordRepository.getByBirthDateBeforeOrBirthDateEquals(personsCovered);
+        List<Person> adultsCovered = medicalRecordRepository.getByBirthDateAfter(personsCovered);
+    }*/
 }

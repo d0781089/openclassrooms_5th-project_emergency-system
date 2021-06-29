@@ -65,7 +65,7 @@ public class PersonService {
         return "The person was DELETED successfully!";
     }
 
-    public List<Person> getPersonsByFireStationAddress(String address) {
+    public List<Person> getPersonsByAddress(String address) {
 
         logger.debug("[Persons list covered by the firestation] Retrieved fire station address: " + address);
 

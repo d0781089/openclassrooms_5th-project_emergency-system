@@ -75,7 +75,7 @@ public class FireStationService {
         logger.debug("[Persons list covered by the firestation] Given station number: " + station);
 
         String fireStationAddress = fireStationRepository.getByStation(station).getAddress();
-        List<Person> personsCovered = personService.getPersonsByFireStationAddress(fireStationAddress);
+        List<Person> personsCovered = personService.getPersonsByAddress(fireStationAddress);
         Map<String, Integer> numberOfChildrenAndAdults = medicalRecordService
                 .getNumberOfChildrenAndAdults(personsCovered);
         logger.debug("[Persons list covered by the firestation] Accountability: " + numberOfChildrenAndAdults);
