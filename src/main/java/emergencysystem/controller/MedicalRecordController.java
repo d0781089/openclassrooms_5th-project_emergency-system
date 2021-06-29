@@ -53,11 +53,11 @@ public class MedicalRecordController {
         return medicalRecordService.deleteMedicalRecord(id);
     }
 
-    /*@GetMapping("/childAlert")
-    public Map<Map<String, List<Person>>, Map<String, List<Person>>> getChildrenByAddress(@RequestParam String address) {
+    @GetMapping("/childAlert")
+    public Map<String, Map<String, List<MedicalRecord>>> getChildrenByAddress(@RequestParam String address) {
 
-        return getChildrenByAddress(address);
-    }*/
+        return medicalRecordService.getChildrenByAddress(address);
+    }
 
     /*private static final String sort = "all";
 

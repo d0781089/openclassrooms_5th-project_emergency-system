@@ -72,13 +72,13 @@ public class FireStationService {
 
     public Map<String, List<Person>> getPersonsCoveredByFireStation(int station) {
 
-        logger.debug("[Persons list covered by the firestation] Given station number: " + station);
+        logger.debug("[COVERED] Given station number: " + station);
 
         String fireStationAddress = fireStationRepository.getByStation(station).getAddress();
         List<Person> personsCovered = personService.getPersonsByAddress(fireStationAddress);
         Map<String, Integer> numberOfChildrenAndAdults = medicalRecordService
                 .getNumberOfChildrenAndAdults(personsCovered);
-        logger.debug("[Persons list covered by the firestation] Accountability: " + numberOfChildrenAndAdults);
+        logger.debug("[COVERED] Accountability: " + numberOfChildrenAndAdults);
 
         Map<String, List<Person>> result = new HashMap<String, List<Person>>();
         result.put("Liste des personnes couvertent par la caserne n°" + station + " comportant "

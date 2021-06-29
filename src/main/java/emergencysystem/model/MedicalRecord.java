@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -22,8 +23,8 @@ public class MedicalRecord {
     private String firstName;
     private String lastName;
 
-    @DateTimeFormat
-    private String birthDate;
+    @DateTimeFormat//(pattern = "dd/MM/yyyy")
+    private Date birthDate;
 
     @ElementCollection
     private List<String> medications;

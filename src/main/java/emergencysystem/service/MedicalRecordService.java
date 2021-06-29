@@ -8,7 +8,9 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -22,7 +24,6 @@ public class MedicalRecordService {
     private PersonService personService;
 
     private static final Logger logger = LogManager.getLogger(MedicalRecordService.class);
-    private String minimumBirthDateRequired = LocalDate.now().minusYears(18).toString();
 
     public MedicalRecord createMedicalRecord(MedicalRecord medicalRecord) {
 
@@ -72,38 +73,42 @@ public class MedicalRecordService {
 
     public Map<String, Integer> getNumberOfChildrenAndAdults(List<Person> persons) {
 
-        logger.debug("[Persons list covered by the firestation] Retrieved covered persons: " + persons);
+        logger.debug("[COVERED] Retrieved covered persons: " + persons);
+
+        //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        Date minimumBirthDateRequired = Date.valueOf(LocalDate.now().minusYears(18)); //.format(formatter));
+        logger.debug("[COVERED] Minimum birth date required: " + minimumBirthDateRequired);
 
         Map<String, Integer> numberOfChildrenAndAdults = new HashMap<String, Integer>();
 
-        List<MedicalRecord> childrenList = medicalRecordRepository.getByBirthDateAfter(minimumBirthDateRequired);
-        logger.debug("[Persons list covered by the firestation] Children medical records: " + childrenList);
+        List<MedicalRecord> childrenList = medicalRecordRepository.getByBirthDateGreaterThan(minimumBirthDateRequired);
+        logger.debug("[COVERED] Children medical records: " + childrenList);
 
         List<MedicalRecord> adultsList = medicalRecordRepository
-                .getByBirthDateBeforeOrBirthDateEquals(minimumBirthDateRequired, minimumBirthDateRequired);
-        logger.debug("[Persons list covered by the firestation] Adults medical records: " + adultsList);
+                .getByBirthDateLessThanEqual(minimumBirthDateRequired);
+        logger.debug("[COVERED] Adults medical records: " + adultsList);
 
-        Set<String> medicalRecordFirstNames = persons.stream()
+        Set<String> firstNamesSet = persons.stream()
                 .map(Person::getFirstName)
                 .collect(Collectors.toSet());
 
-        Set<String> medicalRecordLastNames = persons.stream()
+        Set<String> lastNameSet = persons.stream()
                 .map(Person::getLastName)
                 .collect(Collectors.toSet());
 
         List<MedicalRecord> childrenListFiltered =
-                childrenList.stream().filter(s -> medicalRecordFirstNames.contains(s.getFirstName()))
-                        .filter(s -> medicalRecordLastNames.contains(s.getLastName()))
+                childrenList.stream().filter(s -> firstNamesSet.contains(s.getFirstName()))
+                        .filter(s -> lastNameSet.contains(s.getLastName()))
                         .collect(Collectors.toList());
 
-        logger.debug("[Persons list covered by the firestation] Filtered children list: " + childrenListFiltered);
+        logger.debug("[COVERED] Filtered children list: " + childrenListFiltered);
 
         List<MedicalRecord> adultsListFiltered =
-                adultsList.stream().filter(s -> medicalRecordFirstNames.contains(s.getFirstName()))
-                        .filter(s -> medicalRecordLastNames.contains(s.getLastName()))
+                adultsList.stream().filter(s -> firstNamesSet.contains(s.getFirstName()))
+                        .filter(s -> lastNameSet.contains(s.getLastName()))
                         .collect(Collectors.toList());
 
-        logger.debug("[Persons list covered by the firestation] Filtered adults list: " + adultsListFiltered);
+        logger.debug("[COVERED] Filtered adults list: " + adultsListFiltered);
 
         numberOfChildrenAndAdults.put("children", childrenListFiltered.size());
         numberOfChildrenAndAdults.put("adults", adultsListFiltered.size());
@@ -111,13 +116,56 @@ public class MedicalRecordService {
         return numberOfChildrenAndAdults;
     }
 
-    /*public Map<Map<String, List<Person>>, Map<String, List<Person>>> getChildrenByAddress(String address) {
+    public Map<String, Map<String, List<MedicalRecord>>> getChildrenByAddress(String address) {
 
-        List<Person> personsCovered = personService.getPersonsByAddress(address);
+        //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        Date minimumBirthDateRequired = Date.valueOf(LocalDate.now().minusYears(18)); //.format(formatter));
+        List<Person> persons = personService.getPersonsByAddress(address);
 
-        logger.debug("[Children list covered by the address] Retrieved covered persons: " + personsCovered);
+        logger.debug("[CHILD-ALERT] Retrieved covered persons: " + persons);
 
-        List<Person> childrenCovered = medicalRecordRepository.getByBirthDateBeforeOrBirthDateEquals(personsCovered);
-        List<Person> adultsCovered = medicalRecordRepository.getByBirthDateAfter(personsCovered);
-    }*/
+        List<MedicalRecord> childrenList = medicalRecordRepository.getByBirthDateGreaterThan(minimumBirthDateRequired);
+        logger.debug("[CHILD-ALERT] Children medical records: " + childrenList);
+
+        List<MedicalRecord> adultsList = medicalRecordRepository
+                .getByBirthDateLessThanEqual(minimumBirthDateRequired);
+        logger.debug("[CHILD-ALERT] Adults medical records: " + adultsList);
+
+        Set<String> firstNamesSet = persons.stream()
+                .map(Person::getFirstName)
+                .collect(Collectors.toSet());
+
+        Set<String> lastNameSet = persons.stream()
+                .map(Person::getLastName)
+                .collect(Collectors.toSet());
+
+        List<MedicalRecord> childrenListFiltered =
+                childrenList.stream().filter(s -> firstNamesSet.contains(s.getFirstName()))
+                        .filter(s -> lastNameSet.contains(s.getLastName()))
+                        .collect(Collectors.toList());
+
+        logger.debug("[CHILD-ALERT] Adults medical records: " + childrenListFiltered);
+
+        List<MedicalRecord> adultsListFiltered =
+                adultsList.stream().filter(s -> firstNamesSet.contains(s.getFirstName()))
+                        .filter(s -> lastNameSet.contains(s.getLastName()))
+                        .collect(Collectors.toList());
+
+        logger.debug("[CHILD-ALERT] Adults medical records: " + adultsListFiltered);
+
+        Map<String, List<MedicalRecord>> someExampleList = new TreeMap<>();
+        someExampleList.put("Enfant(s)", childrenListFiltered);
+        someExampleList.put("Reste du foyer", adultsListFiltered);
+
+        /*Map<String, Map<String, List<MedicalRecord>>> users = new TreeMap<>();
+        users.put("adults", someExampleList);*/
+
+        Map<String, Map<String, List<MedicalRecord>>> result =
+                new HashMap<String, Map<String, List<MedicalRecord>>>();
+        result.put("Liste des enfants couverent par l'adresse : " + address + " comportant "
+                + childrenListFiltered.size() + " enfant(s) et " + adultsListFiltered.size()
+                + " adulte(s)", someExampleList);
+
+        return result;
+    }
 }

@@ -67,7 +67,7 @@ public class PersonService {
 
     public List<Person> getPersonsByAddress(String address) {
 
-        logger.debug("[Persons list covered by the firestation] Retrieved fire station address: " + address);
+        logger.debug("[COVERED] Retrieved fire station address: " + address);
 
         return personRepository.getByAddress(address);
     }
