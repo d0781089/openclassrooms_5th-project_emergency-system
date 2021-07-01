@@ -27,6 +27,9 @@ public class MedicalRecordService {
     @Autowired
     private PersonService personService;
 
+    @Autowired
+    private FireStationService fireStationService;
+
     private static final Logger logger = LogManager.getLogger(MedicalRecordService.class);
 
     public MedicalRecord createMedicalRecord(MedicalRecord medicalRecord) {
@@ -194,6 +197,53 @@ public class MedicalRecordService {
         result.put("Liste des enfants couverent par l'adresse : " + address + " comportant "
                 + childrenListFiltered.size() + " enfant(s) et " + adultsListFiltered.size()
                 + " adulte(s)", resultList);
+
+        return result;
+    }
+
+    public Map<String, Map<Integer, Map<String, String>>> getResidentsByAddress(String address) {
+
+        int station = fireStationService.getFireStationByAddress(address).getStation();
+
+        List<Person> personsCovered = personService.getPersonsByAddress(address);
+
+        List<MedicalRecord> medicalRecords = medicalRecordRepository.findAll();
+
+        Set<String> firstNameFilter = personsCovered.stream()
+                .map(Person::getFirstName)
+                .collect(Collectors.toSet());
+
+        Set<String> lastNameFilter = personsCovered.stream()
+                .map(Person::getLastName)
+                .collect(Collectors.toSet());
+
+        List<MedicalRecord> medicalRecordsFiltered = medicalRecords.stream()
+                .filter(m -> firstNameFilter.contains(m.getFirstName()))
+                .filter(m -> lastNameFilter.contains(m.getLastName()))
+                .collect(Collectors.toList());
+
+        Map<Integer, Map<String, String>> residents = new TreeMap<Integer, Map<String, String>>();
+
+        for(MedicalRecord m : medicalRecordsFiltered) {
+            Map<String, String> resident = new TreeMap<String, String>();
+            resident.put("Nom", m.getLastName());
+            resident.put("Prénom", m.getFirstName());
+            resident.put("Téléphone", personsCovered.stream()
+                    .filter(p -> m.getFirstName().equals(p.getFirstName()))
+                    .filter(p -> m.getLastName().equals(p.getLastName()))
+                    .map(Person::getPhone)
+                    .collect(Collectors.joining()));
+            personsCovered.stream()
+                    .map(Person::getPhone)
+                    .forEach(p -> logger.debug("[FIREALERT] Medical record: " + m.getFirstName() + " | Person: " + p));
+            resident.put("Âge", String.valueOf(Period.between(m.getBirthDate().toLocalDate(), LocalDate.now()).getYears()));
+            resident.put("Allergie(s)", m.getAllergies().toString());
+            resident.put("Médicament(s)", m.getMedications().toString());
+            residents.put(residents.size() + 1, resident);
+        }
+
+        Map<String, Map<Integer, Map<String, String>>> result = new HashMap<String, Map<Integer, Map<String, String>>>();
+        result.put("Liste des habitants par l'adresse " + address + " comportant " + residents.size() + " habitant(s) :", residents);
 
         return result;
     }

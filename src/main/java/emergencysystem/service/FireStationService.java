@@ -8,10 +8,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class FireStationService {
@@ -40,6 +38,11 @@ public class FireStationService {
     public FireStation getFireStationById(Long id) {
 
         return fireStationRepository.findById(id).get();
+    }
+
+    public FireStation getFireStationByAddress(String address) {
+
+        return fireStationRepository.getByAddress(address);
     }
 
     public List<FireStation> getFireStations() {
@@ -84,6 +87,25 @@ public class FireStationService {
         result.put("Liste des personnes couvertent par la caserne n°" + station + " comportant "
                 + numberOfChildrenAndAdults.get("children") + " enfant(s) et "
                 + numberOfChildrenAndAdults.get("adults") + " adulte(s):", personsCovered);
+
+        return result;
+    }
+
+    public Map<String, List<String>> getPhoneNumbersCoveredByFireStation(int station) {
+
+        List<Person> personsCovered = personService.getPersonsByAddress(fireStationRepository
+                .getByStation(station)
+                .getAddress());
+        List<String> phoneNumbersCovered = new ArrayList<>();
+
+        phoneNumbersCovered = personsCovered.stream()
+                .map(person -> person.getPhone())
+                .collect(Collectors.toList());
+
+        logger.debug("[PHONEALERT] Retrieved phone numbers: " + phoneNumbersCovered);
+
+        Map<String, List<String>> result = new HashMap<String, List<String>>();
+        result.put("Liste des numéros de téléphones desservis par la caserne n°" + station + " comportant " + phoneNumbersCovered.size() + " numéro(s) :", phoneNumbersCovered);
 
         return result;
     }

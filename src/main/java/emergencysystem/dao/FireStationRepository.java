@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 public interface FireStationRepository extends JpaRepository<FireStation, Long> {
 
     FireStation getByStation(int station);
+    FireStation getByAddress(String address);
 }
 
 

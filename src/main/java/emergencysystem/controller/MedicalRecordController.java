@@ -59,6 +59,12 @@ public class MedicalRecordController {
         return medicalRecordService.getChildrenByAddress(address);
     }
 
+    @GetMapping("/fire")
+    public Map<String, Map<Integer, Map<String, String>>> getResidentsByAddress(@RequestParam String address) {
+
+        return medicalRecordService.getResidentsByAddress(address);
+    }
+
     /*private static final String sort = "all";
 
     JsonData jsonData = new JsonData();

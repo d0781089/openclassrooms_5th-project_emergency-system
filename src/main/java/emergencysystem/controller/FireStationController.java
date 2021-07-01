@@ -60,6 +60,12 @@ public class FireStationController {
         return fireStationService.getPersonsCoveredByFireStation(station);
     }
 
+    @GetMapping("/phoneAlert")
+    Map<String, List<String>> getPhoneNumbersCoveredByFireStation(@RequestParam int station) {
+
+        return fireStationService.getPhoneNumbersCoveredByFireStation(station);
+    }
+
     /*private static final String sort = "all";
 
     JsonData jsonData = new JsonData();
