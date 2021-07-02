@@ -40,6 +40,11 @@ public class FireStationService {
         return fireStationRepository.findById(id).get();
     }
 
+    public FireStation getFireStationByStation(int station) {
+
+        return fireStationRepository.getByStation(station);
+    }
+
     public FireStation getFireStationByAddress(String address) {
 
         return fireStationRepository.getByAddress(address);

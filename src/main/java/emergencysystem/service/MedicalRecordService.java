@@ -78,6 +78,19 @@ public class MedicalRecordService {
         return "The medical record was DELETED successfully!";
     }
 
+    public List<MedicalRecord> getByFirstNameAndLastName(List<Person> persons) {
+
+        List<String> firstNames = persons.stream()
+                .map(Person::getFirstName)
+                .collect(Collectors.toList());
+
+        List<String> lastNames = persons.stream()
+                .map(Person::getLastName)
+                .collect(Collectors.toList());
+
+        return medicalRecordRepository.getByFirstNameInAndLastNameIn(firstNames, lastNames);
+    }
+
     public Map<String, Integer> getNumberOfChildrenAndAdults(List<Person> persons) {
 
         logger.debug("[COVERED] Retrieved covered persons: " + persons);

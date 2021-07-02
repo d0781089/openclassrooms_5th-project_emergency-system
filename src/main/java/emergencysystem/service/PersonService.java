@@ -1,5 +1,6 @@
 package emergencysystem.service;
 
+import emergencysystem.model.MedicalRecord;
 import emergencysystem.model.Person;
 import emergencysystem.dao.PersonRepository;
 import org.apache.logging.log4j.LogManager;
@@ -8,13 +9,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 
 @Service
 public class PersonService {
 
     @Autowired
     private PersonRepository personRepository;
+
+    @Autowired
+    private FireStationService fireStationService;
+
+    @Autowired
+    private MedicalRecordService medicalRecordService;
 
     private static final Logger logger = LogManager.getLogger(PersonService.class);
 
@@ -70,5 +79,23 @@ public class PersonService {
         logger.debug("[COVERED] Retrieved fire station address: " + address);
 
         return personRepository.getByAddress(address);
+    }
+
+    public String getPersonsByStations(List<Integer> stations) {
+
+        Map<String, List<Map<String, String>>> result = new TreeMap<>();
+        List<Map<String, String>> residents;
+        Map<String, String> resident = new TreeMap<>();
+
+        stations.forEach(s -> {
+            String address = fireStationService.getFireStationByStation(s).getAddress();
+            logger.debug("[FLOOD] Address: " + address);
+            List<Person> persons = personRepository.getByAddress(address);
+            logger.debug("[FLOOD] Persons: " + persons);
+            List<MedicalRecord> medicalRecords = medicalRecordService.getByFirstNameAndLastName(persons);
+            logger.debug("[FLOOD] Medical records: " + medicalRecords);
+        });
+
+        return "result";
     }
 }

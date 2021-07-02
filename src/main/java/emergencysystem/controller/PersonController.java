@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 //@Controller
@@ -49,6 +50,12 @@ public class PersonController {
     public String deletePersonById(@PathVariable Long id) {
 
         return personService.deletePersonById(id);
+    }
+
+    @GetMapping("/flood/stations")
+    public String getPersonsByStations(@RequestParam List<Integer> stations) {
+
+        return personService.getPersonsByStations(stations);
     }
 
     /*private static final String sort = "all";
