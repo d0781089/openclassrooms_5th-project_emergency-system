@@ -3,13 +3,35 @@ package emergencysystem.service;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import emergencysystem.dao.PersonRepository;
+import emergencysystem.model.FireStation;
 import emergencysystem.model.JsonData;
+import emergencysystem.model.MedicalRecord;
+import emergencysystem.model.Person;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
+@RestController
 public class JsonService {
+
+    @Autowired
+    static PersonService personService;
+
+    @Autowired
+    static FireStationService fireStationService;
+
+    @Autowired
+    static MedicalRecordService medicalRecordService;
 
     public static ObjectMapper objectMapper = getDefaultObjectMapper();
 
@@ -41,11 +63,24 @@ public class JsonService {
         return objectWriter.writeValueAsString(jsonNode);
     }
 
-    public static JsonData getData(JsonData jsonData) throws IOException {
-        String file = "src/main/resources/data.json";
+    /*public static void saveData(String file) throws IOException {
+
         String json = new String(Files.readAllBytes(Paths.get(file)));
-        JsonNode jsonNode = JsonService.parse(json);
-        jsonData = JsonService.fromJson(jsonNode, JsonData.class);
-        return jsonData;
-    }
+        JsonNode jsonNode = parse(json);
+        List<Person> persons = new ArrayList<>();
+
+        jsonNode.get("persons").forEach(p -> {
+            Person person = new Person();
+            try {
+                person = fromJson(p, Person.class);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+            persons.add(person);
+        System.out.println(p.asText());
+        });
+
+        System.out.println(persons);
+        personRepository.saveAll(persons);
+    }*/
 }
