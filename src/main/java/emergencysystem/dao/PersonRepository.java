@@ -10,4 +10,5 @@ import java.util.List;
 public interface PersonRepository extends JpaRepository<Person, Long> {
 
     List<Person> getByAddress(String address);
+    List<Person> getByFirstNameAndLastName(String firstName, String lastName);
 }

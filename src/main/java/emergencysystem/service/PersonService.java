@@ -5,6 +5,7 @@ import emergencysystem.model.Person;
 import emergencysystem.dao.PersonRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,6 +41,36 @@ public class PersonService {
     public Person getPersonById(Long id) {
 
         return personRepository.findById(id).get(); // 'personRepository.getById(id)': Error 500
+    }
+
+    public List<Map<String, String>> getByFirstNameAndLastName(String firstName, String lastName) {
+
+        List<Person> persons = personRepository.getByFirstNameAndLastName(firstName, lastName);
+        logger.debug("[PERSONINFO] Retrieved persons: " + persons);
+        List<MedicalRecord> medicalRecords = medicalRecordService.getMedicalRecords();
+        List<Map<String, String>> result = new ArrayList<>();
+
+        persons.forEach( p -> {
+            Map<String, String> person = new TreeMap<>();
+
+            person.put("firstName", p.getFirstName());
+            person.put("lastName", p.getLastName());
+            person.put("address", p.getAddress());
+            person.put("email", p.getEmail());
+            medicalRecords.stream()
+                    .filter(m -> firstName.equals(m.getFirstName()))
+                    .filter(m -> lastName.equals(m.getLastName()))
+                    .forEach(m -> {
+                        person.put("age", String.valueOf(Period.between(m.getBirthDate().toLocalDate(), LocalDate.now()).getYears()));
+                        person.put("medications", m.getMedications().toString());
+                        person.put("allergies", m.getAllergies().toString());
+                    });
+
+            logger.debug("[PERSONINFO] Added person: " + person);
+            result.add(person);
+        });
+
+        return result;
     }
 
     public List<Person> getPersons() {

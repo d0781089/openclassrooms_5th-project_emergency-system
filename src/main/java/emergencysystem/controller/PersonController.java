@@ -2,6 +2,8 @@ package emergencysystem.controller;
 
 import emergencysystem.model.Person;
 import emergencysystem.service.PersonService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +17,8 @@ public class PersonController {
 
     @Autowired
     private PersonService personService;
+
+    private static final Logger logger = LogManager.getLogger(PersonService.class);
 
     @PostMapping("/createPerson")
     public Person createPerson(@RequestBody Person person) {
@@ -56,6 +60,14 @@ public class PersonController {
     public Map<String, List<Map<String, String>>> getPersonsByStations(@RequestParam List<Integer> stations) {
 
         return personService.getPersonsByStations(stations);
+    }
+
+    @GetMapping("/personInfo")
+    public List<Map<String, String>> getByFirstNameAndLastName(@RequestParam String firstName, String lastName) {
+
+        logger.debug("[PERSONINFO] " + firstName + " " + lastName);
+
+        return personService.getByFirstNameAndLastName(firstName, lastName);
     }
 
     /*private static final String sort = "all";
