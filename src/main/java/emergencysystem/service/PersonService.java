@@ -73,6 +73,16 @@ public class PersonService {
         return result;
     }
 
+    public Set<String> getEmailByCity(String city) {
+
+        // Using Set not retrieving duplicates
+        Set<String> emails = personRepository.getByCity(city).stream()
+                .map(Person::getEmail)
+                .collect(Collectors.toSet());
+
+        return emails;
+    }
+
     public List<Person> getPersons() {
 
         return personRepository.findAll();

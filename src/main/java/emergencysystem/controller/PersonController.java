@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @RestController
 //@Controller
@@ -68,6 +69,12 @@ public class PersonController {
         logger.debug("[PERSONINFO] " + firstName + " " + lastName);
 
         return personService.getByFirstNameAndLastName(firstName, lastName);
+    }
+
+    @GetMapping("/communityEmail")
+    public Set<String> getEmailByCity(@RequestParam String city) {
+
+        return personService.getEmailByCity(city);
     }
 
     /*private static final String sort = "all";
