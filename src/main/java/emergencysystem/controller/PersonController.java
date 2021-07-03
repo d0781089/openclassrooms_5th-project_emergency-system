@@ -53,7 +53,7 @@ public class PersonController {
     }
 
     @GetMapping("/flood/stations")
-    public String getPersonsByStations(@RequestParam List<Integer> stations) {
+    public Map<String, List<Map<String, String>>> getPersonsByStations(@RequestParam List<Integer> stations) {
 
         return personService.getPersonsByStations(stations);
     }

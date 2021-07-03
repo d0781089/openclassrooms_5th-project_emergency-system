@@ -8,10 +8,10 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.TreeMap;
+import java.time.LocalDate;
+import java.time.Period;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class PersonService {
@@ -81,21 +81,36 @@ public class PersonService {
         return personRepository.getByAddress(address);
     }
 
-    public String getPersonsByStations(List<Integer> stations) {
+    public Map<String, List<Map<String, String>>> getPersonsByStations(List<Integer> stations) {
 
         Map<String, List<Map<String, String>>> result = new TreeMap<>();
-        List<Map<String, String>> residents;
-        Map<String, String> resident = new TreeMap<>();
 
         stations.forEach(s -> {
+            List<Map<String, String>> residents = new ArrayList<>();
             String address = fireStationService.getFireStationByStation(s).getAddress();
             logger.debug("[FLOOD] Address: " + address);
             List<Person> persons = personRepository.getByAddress(address);
             logger.debug("[FLOOD] Persons: " + persons);
             List<MedicalRecord> medicalRecords = medicalRecordService.getByFirstNameAndLastName(persons);
             logger.debug("[FLOOD] Medical records: " + medicalRecords);
+            medicalRecords.forEach(m -> {
+                Map<String, String> resident = new TreeMap<>();
+                resident.put("firstName", m.getFirstName());
+                resident.put("lastName", m.getLastName());
+                resident.put("phone", persons.stream()
+                    .filter(p -> m.getFirstName().equals(p.getFirstName()))
+                    .filter(p -> m.getLastName().equals(p.getLastName()))
+                    .map(Person::getPhone)
+                    .collect(Collectors.joining()));
+                resident.put("age", String.valueOf(Period.between(m.getBirthDate().toLocalDate(), LocalDate.now()).getYears()));
+                resident.put("medications", m.getMedications().toString());
+                resident.put("allergies", m.getAllergies().toString());
+                residents.add(resident);
+            });
+            residents.clear();
+            result.put(address, residents);
         });
 
-        return "result";
+        return result;
     }
 }
