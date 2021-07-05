@@ -40,7 +40,7 @@ public class FireStationService {
         return fireStationRepository.findById(id).get();
     }
 
-    public FireStation getFireStationByStation(int station) {
+    public List<FireStation> getFireStationByStation(int station) {
 
         return fireStationRepository.getByStation(station);
     }
@@ -78,27 +78,35 @@ public class FireStationService {
         return "The fire station was DELETED successfully!";
     }
 
-    public Map<String, List<Person>> getPersonsCoveredByFireStation(int station) {
+    public Map<Map<String, Integer>, List<Person>> getPersonsCoveredByFireStation(int station) {
 
         logger.debug("[COVERED] Given station number: " + station);
 
-        String fireStationAddress = fireStationRepository.getByStation(station).getAddress();
-        List<Person> personsCovered = personService.getPersonsByAddress(fireStationAddress);
-        Map<String, Integer> numberOfChildrenAndAdults = medicalRecordService
-                .getNumberOfChildrenAndAdults(personsCovered);
-        logger.debug("[COVERED] Accountability: " + numberOfChildrenAndAdults);
+        List<FireStation> fireStations = fireStationRepository.getByStation(station);
+        Set<String> stationAddresses = fireStations.stream()
+                .map(FireStation::getAddress)
+                .collect(Collectors.toSet());
 
-        Map<String, List<Person>> result = new HashMap<String, List<Person>>();
-        result.put("Liste des personnes couvertent par la caserne n°" + station + " comportant "
-                + numberOfChildrenAndAdults.get("children") + " enfant(s) et "
-                + numberOfChildrenAndAdults.get("adults") + " adulte(s):", personsCovered);
+        List<Person> personsCovered = new ArrayList<>();
+        Map<String, Integer> numberOfChildrenAndAdults = new TreeMap<>();
+
+        stationAddresses.forEach(address -> {
+            personsCovered.addAll(personService.getPersonsByAddress(address));
+
+            numberOfChildrenAndAdults.putAll(medicalRecordService
+                    .getNumberOfChildrenAndAdults(personsCovered));
+            logger.debug("[COVERED] Accountability: " + numberOfChildrenAndAdults);
+        });
+
+        Map<Map<String, Integer>, List<Person>> result = new HashMap<Map<String, Integer>, List<Person>>();
+        result.put(numberOfChildrenAndAdults, personsCovered);
 
         return result;
     }
 
     public Map<String, List<String>> getPhoneNumbersCoveredByFireStation(int station) {
 
-        List<Person> personsCovered = personService.getPersonsByAddress(fireStationRepository
+        /*List<Person> personsCovered = personService.getPersonsByAddress(fireStationRepository
                 .getByStation(station)
                 .getAddress());
         List<String> phoneNumbersCovered = new ArrayList<>();
@@ -107,10 +115,10 @@ public class FireStationService {
                 .map(person -> person.getPhone())
                 .collect(Collectors.toList());
 
-        logger.debug("[PHONEALERT] Retrieved phone numbers: " + phoneNumbersCovered);
+        logger.debug("[PHONEALERT] Retrieved phone numbers: " + phoneNumbersCovered);*/
 
         Map<String, List<String>> result = new HashMap<String, List<String>>();
-        result.put("Liste des numéros de téléphones desservis par la caserne n°" + station + " comportant " + phoneNumbersCovered.size() + " numéro(s) :", phoneNumbersCovered);
+        //result.put("Liste des numéros de téléphones desservis par la caserne n°" + station + " comportant " + phoneNumbersCovered.size() + " numéro(s) :", phoneNumbersCovered);
 
         return result;
     }

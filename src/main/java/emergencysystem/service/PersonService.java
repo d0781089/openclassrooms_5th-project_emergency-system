@@ -1,5 +1,6 @@
 package emergencysystem.service;
 
+import emergencysystem.model.FireStation;
 import emergencysystem.model.MedicalRecord;
 import emergencysystem.model.Person;
 import emergencysystem.dao.PersonRepository;
@@ -128,7 +129,12 @@ public class PersonService {
 
         stations.forEach(s -> {
             List<Map<String, String>> residents = new ArrayList<>();
-            String address = fireStationService.getFireStationByStation(s).getAddress();
+            List<FireStation> fireStations = fireStationService.getFireStationByStation(s);
+            Set<String> stationAddresses = fireStations.stream()
+                    .map(FireStation::getAddress)
+                    .collect(Collectors.toSet());
+            stationAddresses.forEach( a -> {
+            String address = a;
             logger.debug("[FLOOD] Address: " + address);
             List<Person> persons = personRepository.getByAddress(address);
             logger.debug("[FLOOD] Persons: " + persons);
@@ -139,10 +145,10 @@ public class PersonService {
                 resident.put("firstName", m.getFirstName());
                 resident.put("lastName", m.getLastName());
                 resident.put("phone", persons.stream()
-                    .filter(p -> m.getFirstName().equals(p.getFirstName()))
-                    .filter(p -> m.getLastName().equals(p.getLastName()))
-                    .map(Person::getPhone)
-                    .collect(Collectors.joining()));
+                        .filter(p -> m.getFirstName().equals(p.getFirstName()))
+                        .filter(p -> m.getLastName().equals(p.getLastName()))
+                        .map(Person::getPhone)
+                        .collect(Collectors.joining()));
                 resident.put("age", String.valueOf(Period.between(m.getBirthDate().toLocalDate(), LocalDate.now()).getYears()));
                 resident.put("medications", m.getMedications().toString());
                 resident.put("allergies", m.getAllergies().toString());
@@ -150,6 +156,7 @@ public class PersonService {
             });
             residents.clear();
             result.put(address, residents);
+        });
         });
 
         return result;
