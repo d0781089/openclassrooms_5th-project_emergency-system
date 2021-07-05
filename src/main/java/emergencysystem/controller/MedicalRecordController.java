@@ -57,7 +57,7 @@ public class MedicalRecordController {
     }
 
     @GetMapping("/fire")
-    public List<Map<String, String>> getPersonsByAddress(@RequestParam String address) {
+    public Map<Map<String, Integer>, List<Map<String, String>>> getPersonsByAddress(@RequestParam String address) {
 
         return medicalRecordService.getPersonsByAddress(address);
     }

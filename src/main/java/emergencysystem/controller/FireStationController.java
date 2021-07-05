@@ -52,7 +52,7 @@ public class FireStationController {
     }
 
     @GetMapping("/firestation")
-    Map<Map<String, Integer>, List<Person>> getPersonsByFireStation(@RequestParam int stationNumber) {
+    Map<Map<String, Integer>, List<Map<String, String>>> getPersonsByFireStation(@RequestParam int stationNumber) {
 
         return fireStationService.getPersonsByFireStation(stationNumber);
     }

@@ -8,6 +8,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -77,9 +79,7 @@ public class FireStationService {
         return "The fire station was deleted successfully.";
     }
 
-    public Map<Map<String, Integer>, List<Person>> getPersonsByFireStation(int station) {
-
-        //Todo: Hide non-requested elements
+    public Map<Map<String, Integer>, List<Map<String, String>>> getPersonsByFireStation(int station) {
 
         logger.debug("[COVERED] Get station: " + station);
 
@@ -89,17 +89,30 @@ public class FireStationService {
                 .map(FireStation::getAddress)
                 .collect(Collectors.toSet());
 
-        List<Person> persons = new ArrayList<>();
+        List<Person> personsByAddress = new ArrayList<>();
         Map<String, Integer> countOfChildrenAndAdults = new TreeMap<>();
+        List<Map<String, String>> persons = new ArrayList<>();
 
         addressesByStation.forEach(address -> {
-            persons.addAll(personService.getPersonsByAddress(address));
-            logger.debug("[COVERED] Count children and adults: " + countOfChildrenAndAdults);
+            personsByAddress.addAll(personService.getPersonsByAddress(address));
+
+            personsByAddress.forEach(personByAddress -> {
+                Map<String, String> person = new TreeMap<>();
+
+                person.put("firstName", personByAddress.getFirstName());
+                person.put("lastName", personByAddress.getLastName());
+                person.put("address", personByAddress.getAddress());
+                person.put("phone", personByAddress.getPhone());
+
+                persons.add(person);
+            });
         });
 
-        countOfChildrenAndAdults.putAll(medicalRecordService.getCountOfChildrenAndAdults(persons));
+        countOfChildrenAndAdults.putAll(medicalRecordService.getCountOfChildrenAndAdults(personsByAddress));
+        logger.debug("[COVERED] Count children and adults: " + countOfChildrenAndAdults);
 
-        Map<Map<String, Integer>, List<Person>> result = new HashMap<Map<String, Integer>, List<Person>>();
+        Map<Map<String, Integer>, List<Map<String, String>>> result
+                = new HashMap<Map<String, Integer>, List<Map<String, String>>>();
         result.put(countOfChildrenAndAdults, persons);
 
         return result;
