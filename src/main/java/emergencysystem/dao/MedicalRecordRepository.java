@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface MedicalRecordRepository extends JpaRepository<MedicalRecord, Long> {
 
-    List<MedicalRecord> getByBirthDateGreaterThan(Date minimumBirthDateRequired);
-    List<MedicalRecord> getByBirthDateLessThanEqual(Date minimumBirthDateRequired);
+    List<MedicalRecord> getByBirthDateGreaterThan(Date minimumBirthDate);
+    List<MedicalRecord> getByBirthDateLessThanEqual(Date minimumBirthDate);
     List<MedicalRecord> getByFirstNameInAndLastNameIn(List<String> firstName, List<String> lastName);
 }

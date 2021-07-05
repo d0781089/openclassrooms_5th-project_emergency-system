@@ -6,7 +6,6 @@ import emergencysystem.model.Person;
 import emergencysystem.dao.PersonRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +28,23 @@ public class PersonService {
 
     private static final Logger logger = LogManager.getLogger(PersonService.class);
 
+    public List<Person> getPersons() {
+
+        return personRepository.findAll();
+    }
+
+    public Person getPersonById(Long id) {
+
+        return personRepository.findById(id).get(); // 'personRepository.getById(id)': Error 500
+    }
+
+    public List<Person> getPersonsByAddress(String address) {
+
+        logger.debug("[COVERED] Retrieve fire station address: " + address);
+
+        return personRepository.getByAddress(address);
+    }
+
     public Person createPerson(Person person) {
 
         return personRepository.save(person);
@@ -39,16 +55,14 @@ public class PersonService {
         return personRepository.saveAll(persons);
     }
 
-    public Person getPersonById(Long id) {
-
-        return personRepository.findById(id).get(); // 'personRepository.getById(id)': Error 500
-    }
-
     public List<Map<String, String>> getPersonsByFirstNameAndLastName(String firstName, String lastName) {
 
         List<Person> persons = personRepository.getByFirstNameAndLastName(firstName, lastName);
-        logger.debug("[PERSONINFO] Retrieved persons: " + persons);
+        logger.debug("[PERSONINFO] Retrieve persons: " + persons);
+
         List<MedicalRecord> medicalRecords = medicalRecordService.getMedicalRecords();
+        logger.debug("[PERSONINFO] Retrieve medical records: " + medicalRecords);
+
         List<Map<String, String>> result = new ArrayList<>();
 
         persons.forEach( p -> {
@@ -62,12 +76,13 @@ public class PersonService {
                     .filter(m -> firstName.equals(m.getFirstName()))
                     .filter(m -> lastName.equals(m.getLastName()))
                     .forEach(m -> {
-                        person.put("age", String.valueOf(Period.between(m.getBirthDate().toLocalDate(), LocalDate.now()).getYears()));
+                        person.put("age", String.valueOf(Period.between(m.getBirthDate().toLocalDate()
+                                , LocalDate.now()).getYears()));
                         person.put("medications", m.getMedications().toString());
                         person.put("allergies", m.getAllergies().toString());
                     });
 
-            logger.debug("[PERSONINFO] Added person: " + person);
+            logger.debug("[PERSONINFO] Add person: " + person);
             result.add(person);
         });
 
@@ -76,7 +91,6 @@ public class PersonService {
 
     public Set<String> getEmailsByCity(String city) {
 
-        // Using Set not retrieving duplicates
         Set<String> emails = personRepository.getByCity(city).stream()
                 .map(Person::getEmail)
                 .collect(Collectors.toSet());
@@ -84,80 +98,75 @@ public class PersonService {
         return emails;
     }
 
-    public List<Person> getPersons() {
 
-        return personRepository.findAll();
-    }
 
     public Person updatePerson(Person person) {
-        Person personToUpdate;
+
+        Person personUpdated;
         Optional<Person> optionalPerson = personRepository.findById(person.getId());
 
         if(optionalPerson.isPresent()) {
-            personToUpdate = optionalPerson.get();
-            /*personToUpdate.setFirstName(person.getFirstName()); // Todo: First and Last names must not change
-            personToUpdate.setLastName(person.getLastName());*/
-            personToUpdate.setAddress(person.getAddress());
-            personToUpdate.setCity(person.getCity());
-            personToUpdate.setZip(person.getZip());
-            personToUpdate.setPhone(person.getPhone());
-            personToUpdate.setEmail(person.getEmail());
-            personRepository.save(personToUpdate);
+            personUpdated = optionalPerson.get();
+            personUpdated.setAddress(person.getAddress());
+            personUpdated.setCity(person.getCity());
+            personUpdated.setZip(person.getZip());
+            personUpdated.setPhone(person.getPhone());
+            personUpdated.setEmail(person.getEmail());
+
+            personRepository.save(personUpdated);
         } else {
             return new Person();
         }
-        return personToUpdate;
+        return personUpdated;
     }
 
     public String deletePersonById(Long id) {
 
         personRepository.deleteById(id);
 
-        return "The person was DELETED successfully!";
-    }
-
-    public List<Person> getPersonsByAddress(String address) {
-
-        logger.debug("[COVERED] Retrieved fire station address: " + address);
-
-        return personRepository.getByAddress(address);
+        return "The person(id=" + id + ") was deleted successfully.";
     }
 
     public Map<String, List<Map<String, String>>> getPersonsByStations(List<Integer> stations) {
 
         Map<String, List<Map<String, String>>> result = new TreeMap<>();
-        List<Map<String, String>> residents = new ArrayList<>();
+        List<Map<String, String>> personsByAddress = new ArrayList<>();
 
-        stations.forEach(s -> {
-            List<FireStation> fireStations = fireStationService.getFireStationByStation(s);
+        stations.forEach(station -> {
+            List<FireStation> fireStations = fireStationService.getFireStationByStation(station);
 
-            Set<String> stationAddresses = fireStations.stream()
+            Set<String> addressesByStation = fireStations.stream()
                     .map(FireStation::getAddress)
                     .collect(Collectors.toSet());
 
-            stationAddresses.forEach( address -> {
-                logger.debug("[FLOOD] Address: " + address);
-                List<Person> persons = personRepository.getByAddress(address);
-                logger.debug("[FLOOD] Persons: " + persons);
-                List<MedicalRecord> medicalRecords = medicalRecordService.getByFirstNameAndLastName(persons);
-                logger.debug("[FLOOD] Medical records: " + medicalRecords);
+            addressesByStation.forEach( address -> {
+                logger.debug("[FLOOD] Get address: " + address);
 
-                medicalRecords.forEach(m -> {
-                    Map<String, String> resident = new TreeMap<>();
-                    resident.put("firstName", m.getFirstName());
-                    resident.put("lastName", m.getLastName());
-                    resident.put("phone", persons.stream()
-                            .filter(p -> m.getFirstName().equals(p.getFirstName()))
-                            .filter(p -> m.getLastName().equals(p.getLastName()))
+                List<Person> persons = personRepository.getByAddress(address);
+                logger.debug("[FLOOD] Get persons: " + persons);
+
+                List<MedicalRecord> medicalRecords = medicalRecordService.getByFirstNameAndLastName(persons);
+                logger.debug("[FLOOD] Get medical records: " + medicalRecords);
+
+                medicalRecords.forEach(medicalRecord -> {
+                    Map<String, String> person = new TreeMap<>();
+
+                    person.put("firstName", medicalRecord.getFirstName());
+                    person.put("lastName", medicalRecord.getLastName());
+                    person.put("phone", persons.stream()
+                            .filter(p -> medicalRecord.getFirstName().equals(p.getFirstName()))
+                            .filter(p -> medicalRecord.getLastName().equals(p.getLastName()))
                             .map(Person::getPhone)
                             .collect(Collectors.joining()));
-                    resident.put("age", String.valueOf(Period.between(m.getBirthDate().toLocalDate(), LocalDate.now()).getYears()));
-                    resident.put("medications", m.getMedications().toString());
-                    resident.put("allergies", m.getAllergies().toString());
-                    residents.add(resident);
+                    person.put("age", String.valueOf(Period.between(medicalRecord.getBirthDate().toLocalDate()
+                            , LocalDate.now()).getYears()));
+                    person.put("medications", medicalRecord.getMedications().toString());
+                    person.put("allergies", medicalRecord.getAllergies().toString());
+
+                    personsByAddress.add(person);
                 });
 
-                result.put(address, residents);
+                result.put(address, personsByAddress);
             });
         });
 

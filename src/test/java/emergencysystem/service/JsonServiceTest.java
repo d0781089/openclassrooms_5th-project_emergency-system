@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class JsonServiceTest {
 
-    private String jsonTestString = "{\"firstName\":\"Harry\"," +
+    private String testJsonString = "{\"firstName\":\"Harry\"," +
             "\"lastName\":\"POTTER\"," +
             "\"address\":\"4, Privet Drive\"," +
             "\"city\":\"Little Whinging\"," +
@@ -24,14 +24,16 @@ class JsonServiceTest {
 
     @Test
     void shouldParseJson() throws JsonProcessingException {
-        JsonNode jsonNode = JsonService.parse(jsonTestString);
+
+        JsonNode jsonNode = JsonService.parse(testJsonString);
 
         assertEquals(jsonNode.get("firstName").asText(), "Harry");
     }
 
     @Test
     void shouldStoreJsonInModel() throws JsonProcessingException {
-        JsonNode jsonNode = JsonService.parse(jsonTestString);
+
+        JsonNode jsonNode = JsonService.parse(testJsonString);
         Person person = JsonService.fromJson(jsonNode, Person.class);
 
         assertEquals(person.getFirstName(), "Harry");
@@ -39,7 +41,9 @@ class JsonServiceTest {
 
     @Test
     void shouldParseToJson() {
+
         Person person = new Person();
+
         person.setFirstName("Harry");
         person.setLastName("POTTER");
         person.setAddress("4, Privet Drive");
@@ -47,6 +51,7 @@ class JsonServiceTest {
         person.setZip("21944");
         person.setPhone("442072343456");
         person.setEmail("hpotter@mail.co.uk");
+
         JsonNode jsonNode = JsonService.toJson(person);
 
         assertEquals(jsonNode.get("firstName").asText(), "Harry");
@@ -54,7 +59,9 @@ class JsonServiceTest {
 
     @Test
     void shouldStringify() throws JsonProcessingException {
+
         Person person = new Person();
+
         person.setFirstName("Harry");
         person.setLastName("POTTER");
         person.setAddress("4, Privet Drive");
@@ -62,16 +69,19 @@ class JsonServiceTest {
         person.setZip("21944");
         person.setPhone("+44 20 7234 3456");
         person.setEmail("hpotter@mail.co.uk");
+
         JsonNode jsonNode = JsonService.toJson(person);
 
-        assertEquals(JsonService.stringify(jsonNode, false), jsonTestString);
+        assertEquals(JsonService.stringify(jsonNode, false), testJsonString);
     }
 
     @Test
     void shouldReadFromJsonFile() throws IOException {
+
         String file = "src/main/resources/data.json";
         String json = new String(Files.readAllBytes(Paths.get(file)));
         JsonNode jsonNode = JsonService.parse(json);
+
         JsonData jsonData = JsonService.fromJson(jsonNode, JsonData.class);
 
         assertEquals(jsonData.getPersons().get(0).getFirstName(), "John");

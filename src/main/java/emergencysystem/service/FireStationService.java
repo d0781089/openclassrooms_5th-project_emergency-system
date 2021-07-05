@@ -25,6 +25,26 @@ public class FireStationService {
 
     private static final Logger logger = LogManager.getLogger(FireStationService.class);
 
+    public List<FireStation> getFireStations() {
+
+        return fireStationRepository.findAll();
+    }
+
+    public FireStation getFireStationById(Long id) {
+
+        return fireStationRepository.findById(id).get();
+    }
+
+    public FireStation getFireStationByAddress(String address) {
+
+        return fireStationRepository.getByAddress(address);
+    }
+
+    public List<FireStation> getFireStationByStation(int station) {
+
+        return fireStationRepository.getByStation(station);
+    }
+
     public FireStation createFireStation(FireStation fireStation) {
 
         return fireStationRepository.save(fireStation);
@@ -35,71 +55,52 @@ public class FireStationService {
         return fireStationRepository.saveAll(fireStations);
     }
 
-    public FireStation getFireStationById(Long id) {
-
-        return fireStationRepository.findById(id).get();
-    }
-
-    public List<FireStation> getFireStationByStation(int station) {
-
-        return fireStationRepository.getByStation(station);
-    }
-
-    public FireStation getFireStationByAddress(String address) {
-
-        return fireStationRepository.getByAddress(address);
-    }
-
-    public List<FireStation> getFireStations() {
-
-        return fireStationRepository.findAll();
-    }
-
     public FireStation updateFireStation(FireStation fireStation) {
 
-        FireStation fireStationToUpdate;
+        FireStation fireStationUpdated;
         Optional<FireStation> optionalFireStation = fireStationRepository.findById(fireStation.getId());
 
         if (optionalFireStation.isPresent()) {
-            fireStationToUpdate = optionalFireStation.get();
-            fireStationToUpdate.setAddress(fireStation.getAddress());
-            fireStationRepository.save(fireStationToUpdate);
+            fireStationUpdated = optionalFireStation.get();
+            fireStationUpdated.setAddress(fireStation.getAddress());
+            fireStationRepository.save(fireStationUpdated);
         } else {
             return new FireStation();
         }
-        return fireStationToUpdate;
+        return fireStationUpdated;
     }
 
     public String deleteFireStation(Long id) {
 
         fireStationRepository.deleteById(id);
 
-        return "The fire station was DELETED successfully!";
+        return "The fire station was deleted successfully.";
     }
 
     public Map<Map<String, Integer>, List<Person>> getPersonsByFireStation(int station) {
 
         //Todo: Hide non-requested elements
-        logger.debug("[COVERED] Given station number: " + station);
+
+        logger.debug("[COVERED] Get station: " + station);
 
         List<FireStation> fireStations = fireStationRepository.getByStation(station);
-        Set<String> stationAddresses = fireStations.stream()
+
+        Set<String> addressesByStation = fireStations.stream()
                 .map(FireStation::getAddress)
                 .collect(Collectors.toSet());
 
-        List<Person> personsCovered = new ArrayList<>();
-        Map<String, Integer> numberOfChildrenAndAdults = new TreeMap<>();
+        List<Person> persons = new ArrayList<>();
+        Map<String, Integer> countOfChildrenAndAdults = new TreeMap<>();
 
-        stationAddresses.forEach(address -> {
-            personsCovered.addAll(personService.getPersonsByAddress(address));
-            logger.debug("[COVERED] Accountability: " + numberOfChildrenAndAdults);
+        addressesByStation.forEach(address -> {
+            persons.addAll(personService.getPersonsByAddress(address));
+            logger.debug("[COVERED] Count children and adults: " + countOfChildrenAndAdults);
         });
 
-        numberOfChildrenAndAdults.putAll(medicalRecordService
-                .getNumberOfChildrenAndAdults(personsCovered));
+        countOfChildrenAndAdults.putAll(medicalRecordService.getCountOfChildrenAndAdults(persons));
 
         Map<Map<String, Integer>, List<Person>> result = new HashMap<Map<String, Integer>, List<Person>>();
-        result.put(numberOfChildrenAndAdults, personsCovered);
+        result.put(countOfChildrenAndAdults, persons);
 
         return result;
     }
@@ -107,22 +108,22 @@ public class FireStationService {
     public List<String> getPhonesByFireStation(int station) {
 
         List<FireStation> fireStations = fireStationRepository.getByStation(station);
-        List<Person> personsCovered = new ArrayList<>();
-        List<String> phoneNumbersCovered = new ArrayList<>();
+        List<Person> persons = new ArrayList<>();
+        List<String> phones = new ArrayList<>();
 
-        Set<String> fireStationsAddresses = fireStations.stream()
+        Set<String> addressesByFireStation = fireStations.stream()
                 .map(FireStation::getAddress)
                 .collect(Collectors.toSet());
 
-        fireStationsAddresses.forEach(address -> {
-            personsCovered.addAll(personService.getPersonsByAddress(address));
-            phoneNumbersCovered.addAll(personsCovered.stream()
+        addressesByFireStation.forEach(address -> {
+            persons.addAll(personService.getPersonsByAddress(address));
+            phones.addAll(persons.stream()
                     .map(person -> person.getPhone())
                     .collect(Collectors.toList()));
 
-            logger.debug("[PHONEALERT] Retrieved phone numbers: " + phoneNumbersCovered);
+            logger.debug("[PHONEALERT] Retrieve phones: " + phones);
         });
 
-        return phoneNumbersCovered;
+        return phones;
     }
 }

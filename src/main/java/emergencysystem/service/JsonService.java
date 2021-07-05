@@ -39,48 +39,34 @@ public class JsonService {
         ObjectMapper defaultObjectMapper = new ObjectMapper();
         defaultObjectMapper.configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, false);
         defaultObjectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+
         return defaultObjectMapper;
     }
 
     public static JsonNode parse(String src) throws JsonProcessingException {
+
         return objectMapper.readTree(src);
     }
 
     public static <classTargeted> classTargeted fromJson(JsonNode jsonNode, Class<classTargeted> classTargeted)
             throws JsonProcessingException {
+
         return objectMapper.treeToValue(jsonNode, classTargeted);
     }
 
     public static JsonNode toJson(Object objectTargeted) {
+
         return objectMapper.valueToTree(objectTargeted);
     }
 
     public static String stringify(JsonNode jsonNode, boolean indented) throws JsonProcessingException {
+
         ObjectWriter objectWriter = objectMapper.writer();
+
         if (indented) {
             objectWriter = objectWriter.with(SerializationFeature.INDENT_OUTPUT);
         }
+
         return objectWriter.writeValueAsString(jsonNode);
     }
-
-    /*public static void saveData(String file) throws IOException {
-
-        String json = new String(Files.readAllBytes(Paths.get(file)));
-        JsonNode jsonNode = parse(json);
-        List<Person> persons = new ArrayList<>();
-
-        jsonNode.get("persons").forEach(p -> {
-            Person person = new Person();
-            try {
-                person = fromJson(p, Person.class);
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
-            persons.add(person);
-        System.out.println(p.asText());
-        });
-
-        System.out.println(persons);
-        personRepository.saveAll(persons);
-    }*/
 }

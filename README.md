@@ -8,7 +8,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
-    <img src="src/main/resources/static/img/safety-alerts-icon.png" alt="Logo" width="80" height="80">
+    <img src="src/main/resources/static/img/logo.png" alt="Logo" width="80" height="80">
 
 <h3 align="center">SafetyNet Alerts</h3>
 
