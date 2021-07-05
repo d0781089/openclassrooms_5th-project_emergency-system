@@ -206,7 +206,7 @@ public class MedicalRecordService {
         return resultList;
     }
 
-    public List<Map<String, String>> getResidentsByAddress(String address) {
+    public List<Map<String, String>> getPersonsByAddress(String address) {
 
         //Todo: Hide non-requested elements
 

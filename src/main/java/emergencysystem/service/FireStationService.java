@@ -62,7 +62,6 @@ public class FireStationService {
 
         if (optionalFireStation.isPresent()) {
             fireStationToUpdate = optionalFireStation.get();
-            //fireStationToUpdate.setStation(fireStation.getStation()); // Todo: Fire Station number must not change
             fireStationToUpdate.setAddress(fireStation.getAddress());
             fireStationRepository.save(fireStationToUpdate);
         } else {
@@ -78,7 +77,7 @@ public class FireStationService {
         return "The fire station was DELETED successfully!";
     }
 
-    public Map<Map<String, Integer>, List<Person>> getPersonsCoveredByFireStation(int station) {
+    public Map<Map<String, Integer>, List<Person>> getPersonsByFireStation(int station) {
 
         //Todo: Hide non-requested elements
         logger.debug("[COVERED] Given station number: " + station);
@@ -105,7 +104,7 @@ public class FireStationService {
         return result;
     }
 
-    public List<String> getPhoneNumbersCoveredByFireStation(int station) {
+    public List<String> getPhonesByFireStation(int station) {
 
         List<FireStation> fireStations = fireStationRepository.getByStation(station);
         List<Person> personsCovered = new ArrayList<>();

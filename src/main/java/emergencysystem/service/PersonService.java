@@ -44,7 +44,7 @@ public class PersonService {
         return personRepository.findById(id).get(); // 'personRepository.getById(id)': Error 500
     }
 
-    public List<Map<String, String>> getByFirstNameAndLastName(String firstName, String lastName) {
+    public List<Map<String, String>> getPersonsByFirstNameAndLastName(String firstName, String lastName) {
 
         List<Person> persons = personRepository.getByFirstNameAndLastName(firstName, lastName);
         logger.debug("[PERSONINFO] Retrieved persons: " + persons);
@@ -74,7 +74,7 @@ public class PersonService {
         return result;
     }
 
-    public Set<String> getEmailByCity(String city) {
+    public Set<String> getEmailsByCity(String city) {
 
         // Using Set not retrieving duplicates
         Set<String> emails = personRepository.getByCity(city).stream()

@@ -1,7 +1,6 @@
 package emergencysystem.controller;
 
 import emergencysystem.model.MedicalRecord;
-import emergencysystem.model.Person;
 import emergencysystem.service.MedicalRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -10,12 +9,22 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-//@Controller
-//@RequestMapping("/medicalRecords")
 public class MedicalRecordController {
 
     @Autowired
     private MedicalRecordService medicalRecordService;
+
+    @GetMapping("/medicalRecords")
+    public List<MedicalRecord> getMedicalRecords() {
+
+        return medicalRecordService.getMedicalRecords();
+    }
+
+    @GetMapping("/medicalRecords/{id}")
+    public MedicalRecord getMedicalRecordById(@PathVariable Long id) {
+
+        return medicalRecordService.getMedicalRecordById(id);
+    }
 
     @PostMapping("/createMedicalRecord")
     public MedicalRecord createMedicalRecord(@RequestBody MedicalRecord medicalRecord) {
@@ -29,18 +38,6 @@ public class MedicalRecordController {
         return medicalRecordService.createMedicalRecords(medicalRecords);
     }
 
-    @GetMapping("/medicalRecords/{id}")
-    public MedicalRecord getMedicalRecordById(@PathVariable Long id) {
-
-        return medicalRecordService.getMedicalRecordById(id);
-    }
-
-    @GetMapping("/medicalRecords")
-    public List<MedicalRecord> getMedicalRecords() {
-
-        return medicalRecordService.getMedicalRecords();
-    }
-
     @PutMapping("/updateMedicalRecord")
     public MedicalRecord updateMedicalRecord(@RequestBody MedicalRecord medicalRecord) {
 
@@ -48,7 +45,7 @@ public class MedicalRecordController {
     }
 
     @DeleteMapping("/medicalRecords/{id}")
-    public String deleteMedicalRecord(@PathVariable Long id) {
+    public String deleteMedicalRecordById(@PathVariable Long id) {
 
         return medicalRecordService.deleteMedicalRecord(id);
     }
@@ -60,36 +57,8 @@ public class MedicalRecordController {
     }
 
     @GetMapping("/fire")
-    public List<Map<String, String>> getResidentsByAddress(@RequestParam String address) {
+    public List<Map<String, String>> getPersonsByAddress(@RequestParam String address) {
 
-        return medicalRecordService.getResidentsByAddress(address);
+        return medicalRecordService.getPersonsByAddress(address);
     }
-
-    /*private static final String sort = "all";
-
-    JsonData jsonData = new JsonData();
-    private MedicalRecordRepository medicalRecordRepository;
-
-    @Autowired
-    public MedicalRecordController(MedicalRecordRepository medicalRecordRepository) {
-        this.medicalRecordRepository = medicalRecordRepository;
-    }
-
-    @RequestMapping(method= RequestMethod.GET)
-    public String sortMedicalRecords(Model model) throws IOException {
-        List<MedicalRecord> medicalRecords = medicalRecordRepository.findBySort(sort);
-        medicalRecords.addAll(JsonService.getData(jsonData).getMedicalRecords());
-
-        if (medicalRecords != null) {
-            model.addAttribute("medicalRecords", medicalRecords);
-        }
-        return "medicalRecords";
-    }
-
-    @RequestMapping(method=RequestMethod.POST)
-    public String addToMedicalRecordsList(MedicalRecord medicalRecord) {
-        medicalRecord.setSort(sort);
-        medicalRecordRepository.save(medicalRecord);
-        return "redirect:/medicalRecords";
-    }*/
 }

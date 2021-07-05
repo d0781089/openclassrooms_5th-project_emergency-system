@@ -7,7 +7,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.sql.Date;
-import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -23,7 +22,7 @@ public class MedicalRecord {
     private String firstName;
     private String lastName;
 
-    @DateTimeFormat//(pattern = "dd/MM/yyyy")
+    @DateTimeFormat
     private Date birthDate;
 
     @ElementCollection

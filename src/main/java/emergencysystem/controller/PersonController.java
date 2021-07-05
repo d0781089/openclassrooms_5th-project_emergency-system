@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import emergencysystem.model.FireStation;
-import emergencysystem.model.JsonData;
 import emergencysystem.model.MedicalRecord;
 import emergencysystem.model.Person;
 import emergencysystem.service.FireStationService;
@@ -27,8 +26,6 @@ import java.util.Map;
 import java.util.Set;
 
 @RestController
-//@Controller
-//@RequestMapping("/persons")
 public class PersonController {
 
     @Autowired
@@ -42,6 +39,18 @@ public class PersonController {
 
     private static final Logger logger = LogManager.getLogger(PersonService.class);
 
+    @GetMapping("/persons")
+    public List<Person> getPersons() throws IOException {
+
+        return personService.getPersons();
+    }
+
+    @GetMapping("/persons/{id}")
+    public Person getPersonById(@PathVariable Long id) {
+
+        return personService.getPersonById(id);
+    }
+
     @PostMapping("/createPerson")
     public Person createPerson(@RequestBody Person person) {
 
@@ -54,14 +63,46 @@ public class PersonController {
         return personService.createPersons(persons);
     }
 
-    @GetMapping("/init")
-    public String initializeData() throws IOException {
+    @PutMapping("/updatePerson")
+    public Person updatePerson(@RequestBody Person person) {
 
-        JsonData jsonData = new JsonData();
-        String file = "src/main/resources/data.json";
+        return personService.updatePerson(person);
+    }
+
+    @DeleteMapping("/persons/{id}")
+    public String deletePersonById(@PathVariable Long id) {
+
+        return personService.deletePersonById(id);
+    }
+
+    @GetMapping("/flood/stations")
+    public Map<String, List<Map<String, String>>> getPersonsByStations(@RequestParam List<Integer> stations) {
+
+        return personService.getPersonsByStations(stations);
+    }
+
+    @GetMapping("/personInfo")
+    public List<Map<String, String>> getPersonsByFirstNameAndLastName(@RequestParam String firstName, String lastName) {
+
+        logger.debug("[PERSONINFO] " + firstName + " " + lastName);
+
+        return personService.getPersonsByFirstNameAndLastName(firstName, lastName);
+    }
+
+    @GetMapping("/communityEmail")
+    public Set<String> getEmailsByCity(@RequestParam String city) {
+
+        return personService.getEmailsByCity(city);
+    }
+
+    @GetMapping("/init")
+    public String initializeData(@RequestParam String fileName) throws IOException {
+
+        String file = "src/main/resources/" + fileName;
+
         String json = new String(Files.readAllBytes(Paths.get(file)));
         JsonNode jsonNode = JsonService.parse(json);
-        //jsonData = fromJson(jsonNode, JsonData.class);
+
         List<Person> persons = new ArrayList<>();
         List<FireStation> fireStations = new ArrayList<>();
         List<MedicalRecord> medicalRecords = new ArrayList<>();
@@ -99,123 +140,10 @@ public class PersonController {
             medicalRecords.add(medicalRecord);
         });
 
-        jsonData.setPersons(persons);
-        jsonData.setFireStations(fireStations);
-        jsonData.setMedicalRecords(medicalRecords);
+        personService.createPersons(persons);
+        fireStationService.createFireStations(fireStations);
+        medicalRecordService.createMedicalRecords(medicalRecords);
 
-        personService.createPersons(jsonData.getPersons());
-        fireStationService.createFireStations(jsonData.getFireStations());
-        medicalRecordService.createMedicalRecords(jsonData.getMedicalRecords());
-
-        return "The \"data.json\" file was successfully initialized!";
+        return Paths.get(file).getFileName() + " was successfully initialized!";
     }
-
-    @GetMapping("/persons/{id}")
-    public Person getPersonById(@PathVariable Long id) {
-
-        return personService.getPersonById(id);
-    }
-
-    @GetMapping("/persons")
-    public List<Person> getPersons() throws IOException {
-
-        return personService.getPersons();
-    }
-
-    @PutMapping("/updatePerson")
-    public Person updatePerson(@RequestBody Person person) {
-
-        return personService.updatePerson(person);
-    }
-
-    @DeleteMapping("/persons/{id}")
-    public String deletePersonById(@PathVariable Long id) {
-
-        return personService.deletePersonById(id);
-    }
-
-    @GetMapping("/flood/stations")
-    public Map<String, List<Map<String, String>>> getPersonsByStations(@RequestParam List<Integer> stations) {
-
-        return personService.getPersonsByStations(stations);
-    }
-
-    @GetMapping("/personInfo")
-    public List<Map<String, String>> getByFirstNameAndLastName(@RequestParam String firstName, String lastName) {
-
-        logger.debug("[PERSONINFO] " + firstName + " " + lastName);
-
-        return personService.getByFirstNameAndLastName(firstName, lastName);
-    }
-
-    @GetMapping("/communityEmail")
-    public Set<String> getEmailByCity(@RequestParam String city) {
-
-        return personService.getEmailByCity(city);
-    }
-
-    /*private static final String sort = "all";
-    JsonData jsonData = new JsonData();
-    private PersonRepository personRepository;
-
-    //@Autowired
-    public PersonController(PersonRepository personRepository) throws IOException {
-        this.personRepository = personRepository;
-    }
-
-    @RequestMapping(method= RequestMethod.GET)
-    public String sortPersons(Model model) throws IOException {
-        // Without rewrite
-        //personRepository.saveAll(JsonService.getData(jsonData).getPersons());
-        List<Person> persons = personRepository.findBySort(sort);
-        persons.addAll(JsonService.getData(jsonData).getPersons());
-
-        // With rewrite
-        //List<Person> persons = JsonService.getData(jsonData).getPersons();
-        if (persons != null) {
-            model.addAttribute("persons", persons);
-        }
-        return "persons";
-    }
-
-    @RequestMapping(method=RequestMethod.POST)
-    public String addToPersonsList(Person person) throws IOException {
-        // Without rewrite
-        person.setSort(sort);
-        personRepository.save(person);
-
-        // With rewrite
-        //JsonData jsonData = new JsonData();
-        //jsonData = JsonService.getData(jsonData);
-        //jsonData.setPersons(personRepository.findAll());
-        //JsonNode jsonNode = JsonService.toJson(jsonData);
-        //System.out.println(JsonService.stringify(jsonNode, true));
-
-        return "redirect:/persons";
-    }
-
-    @PutMapping("/persons/{id}")
-    Person updatePerson(@RequestBody Person newPerson, @PathVariable Long id) {
-
-        return personRepository.findById(id)
-                .map(person -> {
-                    person.setFirstName(newPerson.getFirstName());
-                    person.setLastName(newPerson.getLastName());
-                    person.setAddress(newPerson.getAddress());
-                    person.setCity(newPerson.getCity());
-                    person.setZip(newPerson.getZip());
-                    person.setPhone(newPerson.getPhone());
-                    person.setEmail(newPerson.getEmail());
-                    return personRepository.save(person);
-                })
-                .orElseGet(() -> {
-                    newPerson.setId(id);
-                    return personRepository.save(newPerson);
-                });
-    }
-
-    @DeleteMapping("/persons/{id}")
-    void deletePerson(@PathVariable Long id) {
-        personRepository.deleteById(id);
-    }*/
 }

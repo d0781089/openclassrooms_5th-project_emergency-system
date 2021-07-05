@@ -10,12 +10,22 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-//@Controller
-//@RequestMapping("/fireStations")
 public class FireStationController {
 
     @Autowired
     private FireStationService fireStationService;
+
+    @GetMapping("/fireStations")
+    public List<FireStation> getFireStations() {
+
+        return fireStationService.getFireStations();
+    }
+
+    @GetMapping("/fireStations/{id}")
+    public FireStation getFireStationById(@PathVariable Long id) {
+
+        return fireStationService.getFireStationById(id);
+    }
 
     @PostMapping("/createFireStation")
     public FireStation createFireStation(@RequestBody FireStation fireStation) {
@@ -29,19 +39,6 @@ public class FireStationController {
         return fireStationService.createFireStations(fireStations);
     }
 
-    @GetMapping("/fireStations/{id}")
-    public FireStation getFireStationById(@PathVariable Long id) {
-
-        return fireStationService.getFireStationById(id);
-    }
-
-    // Todo: Move getPersonsCoveredByFireStation method here with condition later
-    @GetMapping("/fireStations")
-    public List<FireStation> getFireStations() {
-
-        return fireStationService.getFireStations();
-    }
-
     @PutMapping("/updateFireStation")
     public FireStation updateFireStation(@RequestBody FireStation fireStation) {
 
@@ -49,48 +46,20 @@ public class FireStationController {
     }
 
     @DeleteMapping("/fireStations/{id}")
-    public String deleteFireStation(@PathVariable Long id) {
+    public String deleteFireStationById(@PathVariable Long id) {
 
         return fireStationService.deleteFireStation(id);
     }
 
-    @GetMapping("/fireStation")
-    Map<Map<String, Integer>, List<Person>> getPersonsCoveredByFireStation(@RequestParam int station) {
+    @GetMapping("/firestation")
+    Map<Map<String, Integer>, List<Person>> getPersonsByFireStation(@RequestParam int stationNumber) {
 
-        return fireStationService.getPersonsCoveredByFireStation(station);
+        return fireStationService.getPersonsByFireStation(stationNumber);
     }
 
     @GetMapping("/phoneAlert")
-    List<String> getPhoneNumbersCoveredByFireStation(@RequestParam int station) {
+    List<String> getPhonesByFireStation(@RequestParam int firestation) {
 
-        return fireStationService.getPhoneNumbersCoveredByFireStation(station);
+        return fireStationService.getPhonesByFireStation(firestation);
     }
-
-    /*private static final String sort = "all";
-
-    JsonData jsonData = new JsonData();
-    private FireStationRepository fireStationRepository;
-
-    @Autowired
-    public FireStationController(FireStationRepository fireStationRepository) {
-        this.fireStationRepository = fireStationRepository;
-    }
-
-    @RequestMapping(method= RequestMethod.GET)
-    public String sortFireStations(Model model) throws IOException {
-        List<FireStation> fireStations = fireStationRepository.findBySort(sort);
-        fireStations.addAll(JsonService.getData(jsonData).getFireStations());
-
-        if (fireStations != null) {
-            model.addAttribute("fireStations", fireStations);
-        }
-        return "fireStations";
-    }
-
-    @RequestMapping(method=RequestMethod.POST)
-    public String addToFireStationsList(FireStation fireStation) {
-        fireStation.setSort(sort);
-        fireStationRepository.save(fireStation);
-        return "redirect:/fireStations";
-    }*/
 }
