@@ -61,7 +61,7 @@ public class FireStationController {
     }
 
     @GetMapping("/phoneAlert")
-    Map<String, List<String>> getPhoneNumbersCoveredByFireStation(@RequestParam int station) {
+    List<String> getPhoneNumbersCoveredByFireStation(@RequestParam int station) {
 
         return fireStationService.getPhoneNumbersCoveredByFireStation(station);
     }

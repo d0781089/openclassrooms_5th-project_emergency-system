@@ -80,6 +80,7 @@ public class FireStationService {
 
     public Map<Map<String, Integer>, List<Person>> getPersonsCoveredByFireStation(int station) {
 
+        //Todo: Hide non-requested elements
         logger.debug("[COVERED] Given station number: " + station);
 
         List<FireStation> fireStations = fireStationRepository.getByStation(station);
@@ -92,11 +93,11 @@ public class FireStationService {
 
         stationAddresses.forEach(address -> {
             personsCovered.addAll(personService.getPersonsByAddress(address));
-
-            numberOfChildrenAndAdults.putAll(medicalRecordService
-                    .getNumberOfChildrenAndAdults(personsCovered));
             logger.debug("[COVERED] Accountability: " + numberOfChildrenAndAdults);
         });
+
+        numberOfChildrenAndAdults.putAll(medicalRecordService
+                .getNumberOfChildrenAndAdults(personsCovered));
 
         Map<Map<String, Integer>, List<Person>> result = new HashMap<Map<String, Integer>, List<Person>>();
         result.put(numberOfChildrenAndAdults, personsCovered);
@@ -104,22 +105,25 @@ public class FireStationService {
         return result;
     }
 
-    public Map<String, List<String>> getPhoneNumbersCoveredByFireStation(int station) {
+    public List<String> getPhoneNumbersCoveredByFireStation(int station) {
 
-        /*List<Person> personsCovered = personService.getPersonsByAddress(fireStationRepository
-                .getByStation(station)
-                .getAddress());
+        List<FireStation> fireStations = fireStationRepository.getByStation(station);
+        List<Person> personsCovered = new ArrayList<>();
         List<String> phoneNumbersCovered = new ArrayList<>();
 
-        phoneNumbersCovered = personsCovered.stream()
-                .map(person -> person.getPhone())
-                .collect(Collectors.toList());
+        Set<String> fireStationsAddresses = fireStations.stream()
+                .map(FireStation::getAddress)
+                .collect(Collectors.toSet());
 
-        logger.debug("[PHONEALERT] Retrieved phone numbers: " + phoneNumbersCovered);*/
+        fireStationsAddresses.forEach(address -> {
+            personsCovered.addAll(personService.getPersonsByAddress(address));
+            phoneNumbersCovered.addAll(personsCovered.stream()
+                    .map(person -> person.getPhone())
+                    .collect(Collectors.toList()));
 
-        Map<String, List<String>> result = new HashMap<String, List<String>>();
-        //result.put("Liste des numéros de téléphones desservis par la caserne n°" + station + " comportant " + phoneNumbersCovered.size() + " numéro(s) :", phoneNumbersCovered);
+            logger.debug("[PHONEALERT] Retrieved phone numbers: " + phoneNumbersCovered);
+        });
 
-        return result;
+        return phoneNumbersCovered;
     }
 }

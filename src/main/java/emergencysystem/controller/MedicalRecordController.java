@@ -54,13 +54,13 @@ public class MedicalRecordController {
     }
 
     @GetMapping("/childAlert")
-    public Map<String, Map<String, Map<Integer, Map<String, String>>>> getChildrenByAddress(@RequestParam String address) {
+    public Map<String, List<Map<String, String>>> getChildrenByAddress(@RequestParam String address) {
 
         return medicalRecordService.getChildrenByAddress(address);
     }
 
     @GetMapping("/fire")
-    public Map<String, Map<Integer, Map<String, String>>> getResidentsByAddress(@RequestParam String address) {
+    public List<Map<String, String>> getResidentsByAddress(@RequestParam String address) {
 
         return medicalRecordService.getResidentsByAddress(address);
     }

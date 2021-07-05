@@ -136,7 +136,9 @@ public class MedicalRecordService {
         return numberOfChildrenAndAdults;
     }
 
-    public Map<String, Map<String, Map<Integer, Map<String, String>>>> getChildrenByAddress(String address) {
+    public Map<String, List<Map<String, String>>> getChildrenByAddress(String address) {
+
+        //Todo: Return the person objet properties and values, hide the non-requested
 
         //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         Date minimumBirthDateRequired = Date.valueOf(LocalDate.now().minusYears(18)); //.format(formatter));
@@ -173,48 +175,40 @@ public class MedicalRecordService {
 
         logger.debug("[CHILD-ALERT] Adults medical records: " + adultsListFiltered);
 
-        Map<Integer, Map<String, String>> childrenResult = new TreeMap<>();
-        Map<Integer, Map<String, String>> adultsResult = new TreeMap<>();
+        List<Map<String, String>> childrenResult = new ArrayList<>();
+        List<Map<String, String>> adultsResult = new ArrayList<>();
 
         for(MedicalRecord m : childrenListFiltered) {
             Map<String, String> childData = new TreeMap<>();
             childData.put("Nom", m.getLastName());
             childData.put("Prénom", m.getFirstName());
             childData.put("Âge", String.valueOf(Period.between(m.getBirthDate().toLocalDate(), LocalDate.now()).getYears()));
-            childrenResult.put(childrenResult.size() + 1, childData);
+            childrenResult.add(childData);
         }
 
         logger.debug("[CHILD-ALERT] Children data: " + childrenResult);
 
         for(MedicalRecord m : adultsListFiltered) {
             Map<String, String> adultData = new TreeMap<>();
-            adultData.clear();
             adultData.put("Nom", m.getLastName());
             adultData.put("Prénom", m.getFirstName());
             adultData.put("Âge", String.valueOf(Period.between(m.getBirthDate().toLocalDate(), LocalDate.now()).getYears()));
             logger.debug("[CHILD-ALERT] Single adult data: " + adultData);
-            adultsResult.put(adultsResult.size() + 1, adultData);
+            adultsResult.add(adultData);
         }
 
         logger.debug("[CHILD-ALERT] Adults data: " + adultsResult);
 
-        Map<String, Map<Integer, Map<String, String>>> resultList = new TreeMap<>();
-        resultList.put("Enfant(s)", childrenResult);
-        resultList.put("Reste du foyer", adultsResult);
+        Map<String, List<Map<String, String>>> resultList = new TreeMap<>();
+        resultList.put("children", childrenResult);
+        resultList.put("adults", adultsResult);
 
-        /*Map<String, Map<String, List<MedicalRecord>>> users = new TreeMap<>();
-        users.put("adults", resultList);*/
-
-        Map<String, Map<String, Map<Integer, Map<String, String>>>> result =
-                new HashMap<String, Map<String, Map<Integer, Map<String, String>>>>();
-        result.put("Liste des enfants couverent par l'adresse : " + address + " comportant "
-                + childrenListFiltered.size() + " enfant(s) et " + adultsListFiltered.size()
-                + " adulte(s)", resultList);
-
-        return result;
+        return resultList;
     }
 
-    public Map<String, Map<Integer, Map<String, String>>> getResidentsByAddress(String address) {
+    public List<Map<String, String>> getResidentsByAddress(String address) {
+
+        //Todo: Hide non-requested elements
 
         int station = fireStationService.getFireStationByAddress(address).getStation();
 
@@ -235,7 +229,7 @@ public class MedicalRecordService {
                 .filter(m -> lastNameFilter.contains(m.getLastName()))
                 .collect(Collectors.toList());
 
-        Map<Integer, Map<String, String>> residents = new TreeMap<Integer, Map<String, String>>();
+        List<Map<String, String>> residents = new ArrayList<>();
 
         for(MedicalRecord m : medicalRecordsFiltered) {
             Map<String, String> resident = new TreeMap<String, String>();
@@ -252,12 +246,9 @@ public class MedicalRecordService {
             resident.put("Âge", String.valueOf(Period.between(m.getBirthDate().toLocalDate(), LocalDate.now()).getYears()));
             resident.put("Allergie(s)", m.getAllergies().toString());
             resident.put("Médicament(s)", m.getMedications().toString());
-            residents.put(residents.size() + 1, resident);
+            residents.add(resident);
         }
 
-        Map<String, Map<Integer, Map<String, String>>> result = new HashMap<String, Map<Integer, Map<String, String>>>();
-        result.put("Liste des habitants par l'adresse " + address + " comportant " + residents.size() + " habitant(s) :", residents);
-
-        return result;
+        return residents;
     }
 }
