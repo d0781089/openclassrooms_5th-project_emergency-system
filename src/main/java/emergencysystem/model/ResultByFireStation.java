@@ -16,5 +16,5 @@ public class ResultByFireStation {
 
     private int children;
     private int adults;
-    private List<Person> persons = new ArrayList<>();
+    private List<Person> list = new ArrayList<>();
 }

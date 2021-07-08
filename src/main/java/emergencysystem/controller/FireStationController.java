@@ -6,6 +6,7 @@ import emergencysystem.service.FireStationDeletionService;
 import emergencysystem.service.FireStationReadService;
 import emergencysystem.service.FireStationUpdateService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -60,7 +61,7 @@ public class FireStationController {
     }
 
     @GetMapping("/firestation")
-    Map<Map<String, Integer>, List<Map<String, String>>> getPersonsByFireStation(@RequestParam int stationNumber) {
+    MappingJacksonValue getPersonsByFireStation(@RequestParam int stationNumber) {
 
         return fireStationReadService.getPersonsByFireStation(stationNumber);
     }

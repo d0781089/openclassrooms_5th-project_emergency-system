@@ -1,11 +1,16 @@
 package emergencysystem.service;
 
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import emergencysystem.dao.FireStationRepository;
 import emergencysystem.model.FireStation;
 import emergencysystem.model.Person;
+import emergencysystem.model.ResultByFireStation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -45,7 +50,7 @@ public class FireStationReadService {
         return fireStationRepository.getByStation(station);
     }
 
-    public Map<Map<String, Integer>, List<Map<String, String>>> getPersonsByFireStation(int station) {
+    public MappingJacksonValue getPersonsByFireStation(int station) {
 
         logger.debug("[COVERED] Get station: " + station);
 
@@ -56,30 +61,37 @@ public class FireStationReadService {
                 .collect(Collectors.toSet());
 
         List<Person> personsByAddress = new ArrayList<>();
-        Map<String, Integer> countOfChildrenAndAdults = new TreeMap<>();
-        List<Map<String, String>> persons = new ArrayList<>();
+        List<Person> persons = new ArrayList<>();
 
         addressesByStation.forEach(address -> {
             personsByAddress.addAll(personReadService.getPersonsByAddress(address));
 
             personsByAddress.forEach(personByAddress -> {
-                Map<String, String> person = new TreeMap<>();
+                Person person = new Person();
 
-                person.put("firstName", personByAddress.getFirstName());
-                person.put("lastName", personByAddress.getLastName());
-                person.put("address", personByAddress.getAddress());
-                person.put("phone", personByAddress.getPhone());
+                person.setFirstName(personByAddress.getFirstName());
+                person.setLastName(personByAddress.getLastName());
+                person.setAddress(personByAddress.getAddress());
+                person.setPhone(personByAddress.getPhone());
 
                 persons.add(person);
             });
         });
 
+        Map<String, Integer> countOfChildrenAndAdults = new TreeMap<>();
         countOfChildrenAndAdults.putAll(medicalRecordReadService.getCountOfChildrenAndAdults(personsByAddress));
         logger.debug("[COVERED] Count children and adults: " + countOfChildrenAndAdults);
 
-        Map<Map<String, Integer>, List<Map<String, String>>> result
-                = new HashMap<Map<String, Integer>, List<Map<String, String>>>();
-        result.put(countOfChildrenAndAdults, persons);
+        ResultByFireStation resultByFireStation = new ResultByFireStation();
+        resultByFireStation.setChildren(countOfChildrenAndAdults.get("children"));
+        resultByFireStation.setAdults(countOfChildrenAndAdults.get("adults"));
+        resultByFireStation.setList(persons);
+
+        SimpleBeanPropertyFilter personByStationFilter = SimpleBeanPropertyFilter.filterOutAllExcept(
+                "firstName", "lastName", "address", "phone");
+        FilterProvider filterList = new SimpleFilterProvider().addFilter("personFilter", personByStationFilter);
+        MappingJacksonValue result = new MappingJacksonValue(resultByFireStation);
+        result.setFilters(filterList);
 
         return result;
     }
