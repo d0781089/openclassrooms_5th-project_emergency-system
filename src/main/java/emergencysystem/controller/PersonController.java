@@ -39,8 +39,9 @@ public class PersonController {
 
     @Autowired
     private MedicalRecordCreationService medicalRecordCreationService;
-    @Autowired
-    private MedicalRecordReadService medicalRecordReadService;
+
+    private JsonReadService jsonReadService;
+    private JsonParseService jsonParseService;
 
     private static final Logger logger = LogManager.getLogger(PersonReadService.class);
 
@@ -106,7 +107,7 @@ public class PersonController {
         String file = "src/main/resources/" + fileName;
 
         String json = new String(Files.readAllBytes(Paths.get(file)));
-        JsonNode jsonNode = JsonService.parse(json);
+        JsonNode jsonNode = jsonParseService.parse(json);
 
         List<Person> persons = new ArrayList<>();
         List<FireStation> fireStations = new ArrayList<>();
@@ -115,7 +116,7 @@ public class PersonController {
         jsonNode.get("persons").forEach(p -> {
             Person person = new Person();
             try {
-                person = JsonService.fromJson(p, Person.class);
+                person = jsonReadService.read(p, Person.class);
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
@@ -125,7 +126,7 @@ public class PersonController {
         jsonNode.get("fireStations").forEach(f -> {
             FireStation fireStation = new FireStation();
             try {
-                fireStation = JsonService.fromJson(f, FireStation.class);
+                fireStation = jsonReadService.read(f, FireStation.class);
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
@@ -138,7 +139,7 @@ public class PersonController {
             o.put("birthDate", String.valueOf(LocalDate.parse(m.get("birthDate").asText(), formatter)));
             MedicalRecord medicalRecord = new MedicalRecord();
             try {
-                medicalRecord = JsonService.fromJson(o, MedicalRecord.class);
+                medicalRecord = jsonReadService.read(o, MedicalRecord.class);
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }

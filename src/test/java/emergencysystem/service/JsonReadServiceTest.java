@@ -12,7 +12,10 @@ import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class JsonServiceTest {
+class JsonReadServiceTest {
+
+    private JsonReadService jsonReadService;
+    private JsonParseService jsonParseService;
 
     private String testJsonString = "{\"firstName\":\"Harry\"," +
             "\"lastName\":\"POTTER\"," +
@@ -25,7 +28,7 @@ class JsonServiceTest {
     @Test
     void shouldParseJson() throws JsonProcessingException {
 
-        JsonNode jsonNode = JsonService.parse(testJsonString);
+        JsonNode jsonNode = jsonParseService.parse(testJsonString);
 
         assertEquals(jsonNode.get("firstName").asText(), "Harry");
     }
@@ -33,8 +36,8 @@ class JsonServiceTest {
     @Test
     void shouldStoreJsonInModel() throws JsonProcessingException {
 
-        JsonNode jsonNode = JsonService.parse(testJsonString);
-        Person person = JsonService.fromJson(jsonNode, Person.class);
+        JsonNode jsonNode = jsonParseService.parse(testJsonString);
+        Person person = jsonReadService.read(jsonNode, Person.class);
 
         assertEquals(person.getFirstName(), "Harry");
     }
@@ -52,7 +55,7 @@ class JsonServiceTest {
         person.setPhone("442072343456");
         person.setEmail("hpotter@mail.co.uk");
 
-        JsonNode jsonNode = JsonService.toJson(person);
+        JsonNode jsonNode = jsonParseService.toJson(person);
 
         assertEquals(jsonNode.get("firstName").asText(), "Harry");
     }
@@ -70,9 +73,9 @@ class JsonServiceTest {
         person.setPhone("+44 20 7234 3456");
         person.setEmail("hpotter@mail.co.uk");
 
-        JsonNode jsonNode = JsonService.toJson(person);
+        JsonNode jsonNode = jsonParseService.toJson(person);
 
-        assertEquals(JsonService.stringify(jsonNode, false), testJsonString);
+        assertEquals(jsonReadService.stringify(jsonNode, false), testJsonString);
     }
 
     @Test
@@ -80,9 +83,9 @@ class JsonServiceTest {
 
         String file = "src/main/resources/data.json";
         String json = new String(Files.readAllBytes(Paths.get(file)));
-        JsonNode jsonNode = JsonService.parse(json);
+        JsonNode jsonNode = jsonParseService.parse(json);
 
-        JsonData jsonData = JsonService.fromJson(jsonNode, JsonData.class);
+        JsonData jsonData = jsonReadService.read(jsonNode, JsonData.class);
 
         assertEquals(jsonData.getPersons().get(0).getFirstName(), "John");
     }

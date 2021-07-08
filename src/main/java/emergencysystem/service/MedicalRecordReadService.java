@@ -18,13 +18,13 @@ import java.util.stream.Collectors;
 public class MedicalRecordReadService {
 
     @Autowired
-    private MedicalRecordRepository medicalRecordRepository;
-
-    @Autowired
     private PersonReadService personReadService;
 
     @Autowired
     private FireStationReadService fireStationReadService;
+
+    @Autowired
+    private MedicalRecordRepository medicalRecordRepository;
 
     private static final Logger logger = LogManager.getLogger(MedicalRecordReadService.class);
 

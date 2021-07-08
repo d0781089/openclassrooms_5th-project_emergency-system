@@ -15,10 +15,10 @@ import java.util.stream.Collectors;
 public class FireStationReadService {
 
     @Autowired
-    private FireStationRepository fireStationRepository;
+    private PersonReadService personReadService;
 
     @Autowired
-    private PersonReadService personReadService;
+    private FireStationRepository fireStationRepository;
 
     @Autowired
     private MedicalRecordReadService medicalRecordReadService;
