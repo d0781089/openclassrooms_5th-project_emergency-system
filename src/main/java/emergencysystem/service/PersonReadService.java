@@ -15,7 +15,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class PersonService {
+public class PersonReadService {
 
     @Autowired
     private PersonRepository personRepository;
@@ -24,9 +24,9 @@ public class PersonService {
     private FireStationService fireStationService;
 
     @Autowired
-    private MedicalRecordService medicalRecordService;
+    private MedicalRecordReadService medicalRecordReadService;
 
-    private static final Logger logger = LogManager.getLogger(PersonService.class);
+    private static final Logger logger = LogManager.getLogger(PersonReadService.class);
 
     public List<Person> getPersons() {
 
@@ -35,7 +35,7 @@ public class PersonService {
 
     public Person getPersonById(Long id) {
 
-        return personRepository.findById(id).get(); // 'personRepository.getById(id)': Error 500
+        return personRepository.findById(id).get();
     }
 
     public List<Person> getPersonsByAddress(String address) {
@@ -45,22 +45,12 @@ public class PersonService {
         return personRepository.getByAddress(address);
     }
 
-    public Person createPerson(Person person) {
-
-        return personRepository.save(person);
-    }
-
-    public List<Person> createPersons(List<Person> persons) {
-
-        return personRepository.saveAll(persons);
-    }
-
     public List<Map<String, String>> getPersonsByFirstNameAndLastName(String firstName, String lastName) {
 
         List<Person> persons = personRepository.getByFirstNameAndLastName(firstName, lastName);
         logger.debug("[PERSONINFO] Retrieve persons: " + persons);
 
-        List<MedicalRecord> medicalRecords = medicalRecordService.getMedicalRecords();
+        List<MedicalRecord> medicalRecords = medicalRecordReadService.getMedicalRecords();
         logger.debug("[PERSONINFO] Retrieve medical records: " + medicalRecords);
 
         List<Map<String, String>> result = new ArrayList<>();
@@ -98,35 +88,6 @@ public class PersonService {
         return emails;
     }
 
-
-
-    public Person updatePerson(Person person) {
-
-        Person personUpdated;
-        Optional<Person> optionalPerson = personRepository.findById(person.getId());
-
-        if(optionalPerson.isPresent()) {
-            personUpdated = optionalPerson.get();
-            personUpdated.setAddress(person.getAddress());
-            personUpdated.setCity(person.getCity());
-            personUpdated.setZip(person.getZip());
-            personUpdated.setPhone(person.getPhone());
-            personUpdated.setEmail(person.getEmail());
-
-            personRepository.save(personUpdated);
-        } else {
-            return new Person();
-        }
-        return personUpdated;
-    }
-
-    public String deletePersonById(Long id) {
-
-        personRepository.deleteById(id);
-
-        return "The person(id=" + id + ") was deleted successfully.";
-    }
-
     public Map<String, List<Map<String, String>>> getPersonsByStations(List<Integer> stations) {
 
         Map<String, List<Map<String, String>>> result = new TreeMap<>();
@@ -145,7 +106,7 @@ public class PersonService {
                 List<Person> persons = personRepository.getByAddress(address);
                 logger.debug("[FLOOD] Get persons: " + persons);
 
-                List<MedicalRecord> medicalRecords = medicalRecordService.getByFirstNameAndLastName(persons);
+                List<MedicalRecord> medicalRecords = medicalRecordReadService.getByFirstNameAndLastName(persons);
                 logger.debug("[FLOOD] Get medical records: " + medicalRecords);
 
                 medicalRecords.forEach(medicalRecord -> {

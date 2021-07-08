@@ -8,8 +8,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.Period;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -20,10 +18,10 @@ public class FireStationService {
     private FireStationRepository fireStationRepository;
 
     @Autowired
-    private PersonService personService;
+    private PersonReadService personReadService;
 
     @Autowired
-    private MedicalRecordService medicalRecordService;
+    private MedicalRecordReadService medicalRecordReadService;
 
     private static final Logger logger = LogManager.getLogger(FireStationService.class);
 
@@ -94,7 +92,7 @@ public class FireStationService {
         List<Map<String, String>> persons = new ArrayList<>();
 
         addressesByStation.forEach(address -> {
-            personsByAddress.addAll(personService.getPersonsByAddress(address));
+            personsByAddress.addAll(personReadService.getPersonsByAddress(address));
 
             personsByAddress.forEach(personByAddress -> {
                 Map<String, String> person = new TreeMap<>();
@@ -108,7 +106,7 @@ public class FireStationService {
             });
         });
 
-        countOfChildrenAndAdults.putAll(medicalRecordService.getCountOfChildrenAndAdults(personsByAddress));
+        countOfChildrenAndAdults.putAll(medicalRecordReadService.getCountOfChildrenAndAdults(personsByAddress));
         logger.debug("[COVERED] Count children and adults: " + countOfChildrenAndAdults);
 
         Map<Map<String, Integer>, List<Map<String, String>>> result
@@ -129,7 +127,7 @@ public class FireStationService {
                 .collect(Collectors.toSet());
 
         addressesByFireStation.forEach(address -> {
-            persons.addAll(personService.getPersonsByAddress(address));
+            persons.addAll(personReadService.getPersonsByAddress(address));
             phones.addAll(persons.stream()
                     .map(person -> person.getPhone())
                     .collect(Collectors.toList()));

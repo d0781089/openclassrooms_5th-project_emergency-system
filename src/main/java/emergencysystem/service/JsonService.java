@@ -3,35 +3,20 @@ package emergencysystem.service;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.*;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import emergencysystem.dao.PersonRepository;
-import emergencysystem.model.FireStation;
-import emergencysystem.model.JsonData;
-import emergencysystem.model.MedicalRecord;
-import emergencysystem.model.Person;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 public class JsonService {
 
     @Autowired
-    static PersonService personService;
+    static PersonReadService personReadService;
 
     @Autowired
     static FireStationService fireStationService;
 
     @Autowired
-    static MedicalRecordService medicalRecordService;
+    static MedicalRecordReadService medicalRecordReadService;
 
     public static ObjectMapper objectMapper = getDefaultObjectMapper();
 

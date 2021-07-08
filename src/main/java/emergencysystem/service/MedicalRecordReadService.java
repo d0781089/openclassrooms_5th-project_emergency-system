@@ -5,32 +5,28 @@ import emergencysystem.model.MedicalRecord;
 import emergencysystem.model.Person;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.thymeleaf.standard.expression.Each;
 
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.Period;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAmount;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class MedicalRecordService {
+public class MedicalRecordReadService {
 
     @Autowired
     private MedicalRecordRepository medicalRecordRepository;
 
     @Autowired
-    private PersonService personService;
+    private PersonReadService personReadService;
 
     @Autowired
     private FireStationService fireStationService;
 
-    private static final Logger logger = LogManager.getLogger(MedicalRecordService.class);
+    private static final Logger logger = LogManager.getLogger(MedicalRecordReadService.class);
 
     public List<MedicalRecord> getMedicalRecords() {
 
@@ -136,7 +132,7 @@ public class MedicalRecordService {
 
         Date minimumBirthDate = Date.valueOf(LocalDate.now().minusYears(18));
 
-        List<Person> persons = personService.getPersonsByAddress(address);
+        List<Person> persons = personReadService.getPersonsByAddress(address);
         logger.debug("[CHILDALERT] Retrieve persons: " + persons);
 
         List<MedicalRecord> childrenMedicalRecords = medicalRecordRepository.getByBirthDateGreaterThan(minimumBirthDate);
@@ -207,7 +203,7 @@ public class MedicalRecordService {
 
         int station = fireStationService.getFireStationByAddress(address).getStation();
 
-        List<Person> personsByAddress = personService.getPersonsByAddress(address);
+        List<Person> personsByAddress = personReadService.getPersonsByAddress(address);
         List<MedicalRecord> medicalRecords = medicalRecordRepository.findAll();
 
         Set<String> firstNames = personsByAddress.stream()
