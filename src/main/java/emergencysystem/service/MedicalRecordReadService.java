@@ -24,7 +24,7 @@ public class MedicalRecordReadService {
     private PersonReadService personReadService;
 
     @Autowired
-    private FireStationService fireStationService;
+    private FireStationReadService fireStationReadService;
 
     private static final Logger logger = LogManager.getLogger(MedicalRecordReadService.class);
 
@@ -167,7 +167,7 @@ public class MedicalRecordReadService {
 
         // Todo: Return the station number
 
-        int station = fireStationService.getFireStationByAddress(address).getStation();
+        int station = fireStationReadService.getFireStationByAddress(address).getStation();
 
         List<Person> personsByAddress = personReadService.getPersonsByAddress(address);
         List<MedicalRecord> medicalRecords = medicalRecordRepository.findAll();

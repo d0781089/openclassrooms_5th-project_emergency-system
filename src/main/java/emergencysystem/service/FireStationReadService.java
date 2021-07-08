@@ -12,7 +12,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class FireStationService {
+public class FireStationReadService {
 
     @Autowired
     private FireStationRepository fireStationRepository;
@@ -23,7 +23,7 @@ public class FireStationService {
     @Autowired
     private MedicalRecordReadService medicalRecordReadService;
 
-    private static final Logger logger = LogManager.getLogger(FireStationService.class);
+    private static final Logger logger = LogManager.getLogger(FireStationReadService.class);
 
     public List<FireStation> getFireStations() {
 
@@ -43,38 +43,6 @@ public class FireStationService {
     public List<FireStation> getFireStationByStation(int station) {
 
         return fireStationRepository.getByStation(station);
-    }
-
-    public FireStation createFireStation(FireStation fireStation) {
-
-        return fireStationRepository.save(fireStation);
-    }
-
-    public List<FireStation> createFireStations(List<FireStation> fireStations) {
-
-        return fireStationRepository.saveAll(fireStations);
-    }
-
-    public FireStation updateFireStation(FireStation fireStation) {
-
-        FireStation fireStationUpdated;
-        Optional<FireStation> optionalFireStation = fireStationRepository.findById(fireStation.getId());
-
-        if (optionalFireStation.isPresent()) {
-            fireStationUpdated = optionalFireStation.get();
-            fireStationUpdated.setAddress(fireStation.getAddress());
-            fireStationRepository.save(fireStationUpdated);
-        } else {
-            return new FireStation();
-        }
-        return fireStationUpdated;
-    }
-
-    public String deleteFireStation(Long id) {
-
-        fireStationRepository.deleteById(id);
-
-        return "The fire station was deleted successfully.";
     }
 
     public Map<Map<String, Integer>, List<Map<String, String>>> getPersonsByFireStation(int station) {

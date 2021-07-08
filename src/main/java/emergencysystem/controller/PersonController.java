@@ -35,7 +35,7 @@ public class PersonController {
     private PersonDeletionService personDeletionService;
 
     @Autowired
-    private FireStationService fireStationService;
+    private FireStationCreationService fireStationCreationService;
 
     @Autowired
     private MedicalRecordCreationService medicalRecordCreationService;
@@ -146,7 +146,7 @@ public class PersonController {
         });
 
         personCreationService.createPersons(persons);
-        fireStationService.createFireStations(fireStations);
+        fireStationCreationService.createFireStations(fireStations);
         medicalRecordCreationService.createMedicalRecords(medicalRecords);
 
         return Paths.get(file).getFileName() + " was successfully initialized!";

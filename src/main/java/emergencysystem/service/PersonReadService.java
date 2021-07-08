@@ -21,7 +21,7 @@ public class PersonReadService {
     private PersonRepository personRepository;
 
     @Autowired
-    private FireStationService fireStationService;
+    private FireStationReadService fireStationReadService;
 
     @Autowired
     private MedicalRecordReadService medicalRecordReadService;
@@ -94,7 +94,7 @@ public class PersonReadService {
         List<Map<String, String>> personsByAddress = new ArrayList<>();
 
         stations.forEach(station -> {
-            List<FireStation> fireStations = fireStationService.getFireStationByStation(station);
+            List<FireStation> fireStations = fireStationReadService.getFireStationByStation(station);
 
             Set<String> addressesByStation = fireStations.stream()
                     .map(FireStation::getAddress)

@@ -13,7 +13,7 @@ public class JsonService {
     static PersonReadService personReadService;
 
     @Autowired
-    static FireStationService fireStationService;
+    static FireStationReadService fireStationReadService;
 
     @Autowired
     static MedicalRecordReadService medicalRecordReadService;

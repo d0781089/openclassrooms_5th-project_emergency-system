@@ -1,8 +1,10 @@
 package emergencysystem.controller;
 
 import emergencysystem.model.FireStation;
-import emergencysystem.model.Person;
-import emergencysystem.service.FireStationService;
+import emergencysystem.service.FireStationCreationService;
+import emergencysystem.service.FireStationDeletionService;
+import emergencysystem.service.FireStationReadService;
+import emergencysystem.service.FireStationUpdateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,53 +15,59 @@ import java.util.Map;
 public class FireStationController {
 
     @Autowired
-    private FireStationService fireStationService;
+    private FireStationCreationService fireStationCreationService;
+    @Autowired
+    private FireStationReadService fireStationReadService;
+    @Autowired
+    private FireStationUpdateService fireStationUpdateService;
+    @Autowired
+    private FireStationDeletionService fireStationDeletionService;
 
     @GetMapping("/fireStations")
     public List<FireStation> getFireStations() {
 
-        return fireStationService.getFireStations();
+        return fireStationReadService.getFireStations();
     }
 
     @GetMapping("/fireStations/{id}")
     public FireStation getFireStationById(@PathVariable Long id) {
 
-        return fireStationService.getFireStationById(id);
+        return fireStationReadService.getFireStationById(id);
     }
 
     @PostMapping("/createFireStation")
     public FireStation createFireStation(@RequestBody FireStation fireStation) {
 
-        return fireStationService.createFireStation(fireStation);
+        return fireStationCreationService.createFireStation(fireStation);
     }
 
     @PostMapping("/createFireStations")
     public List<FireStation> createFireStation(@RequestBody List<FireStation> fireStations) {
 
-        return fireStationService.createFireStations(fireStations);
+        return fireStationCreationService.createFireStations(fireStations);
     }
 
     @PutMapping("/updateFireStation")
     public FireStation updateFireStation(@RequestBody FireStation fireStation) {
 
-        return fireStationService.updateFireStation(fireStation);
+        return fireStationUpdateService.updateFireStation(fireStation);
     }
 
     @DeleteMapping("/fireStations/{id}")
     public String deleteFireStationById(@PathVariable Long id) {
 
-        return fireStationService.deleteFireStation(id);
+        return fireStationDeletionService.deleteFireStation(id);
     }
 
     @GetMapping("/firestation")
     Map<Map<String, Integer>, List<Map<String, String>>> getPersonsByFireStation(@RequestParam int stationNumber) {
 
-        return fireStationService.getPersonsByFireStation(stationNumber);
+        return fireStationReadService.getPersonsByFireStation(stationNumber);
     }
 
     @GetMapping("/phoneAlert")
     List<String> getPhonesByFireStation(@RequestParam int firestation) {
 
-        return fireStationService.getPhonesByFireStation(firestation);
+        return fireStationReadService.getPhonesByFireStation(firestation);
     }
 }
