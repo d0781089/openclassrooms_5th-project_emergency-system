@@ -12,6 +12,6 @@ import java.util.List;
 @NoArgsConstructor
 public class ResultChildAlert {
 
-    private List<PersonWithAge> children = new ArrayList<>();
-    private List<PersonWithAge> adults = new ArrayList<>();
+    private List<PersonWithAge> children;
+    private List<PersonWithAge> adults;
 }

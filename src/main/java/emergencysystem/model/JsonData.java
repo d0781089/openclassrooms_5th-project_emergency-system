@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 public class JsonData {
 
-    List<Person> persons;
-    List<FireStation> fireStations;
-    List<MedicalRecord> medicalRecords;
+    private List<Person> persons;
+    private List<FireStation> fireStations;
+    private List<MedicalRecord> medicalRecords;
 }

@@ -1,11 +1,14 @@
 package emergencysystem.service;
 
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import emergencysystem.dao.MedicalRecordRepository;
-import emergencysystem.model.MedicalRecord;
-import emergencysystem.model.Person;
+import emergencysystem.model.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
@@ -92,9 +95,7 @@ public class MedicalRecordReadService {
         return countOfChildrenAndAdults;
     }
 
-    public Map<String, List<Map<String, String>>> getChildrenByAddress(String address) {
-
-        //Todo: Return the person objet properties and values, hide the non-requested
+    public MappingJacksonValue getChildrenByAddress(String address) {
 
         Date minimumBirthDate = Date.valueOf(LocalDate.now().minusYears(18));
 
@@ -127,14 +128,15 @@ public class MedicalRecordReadService {
                         .collect(Collectors.toList());
         logger.debug("[CHILDALERT] Get adults medical records by first and last name: " + adultsByFirstNameAndLastName);
 
-        List<Map<String, String>> children = new ArrayList<>();
-        List<Map<String, String>> adults = new ArrayList<>();
+        List<PersonWithAge> children = new ArrayList<>();
+        List<PersonWithAge> adults = new ArrayList<>();
 
         for(MedicalRecord m : childrenByFirstNameAndLastName) {
-            Map<String, String> child = new TreeMap<>();
-            child.put("lastName", m.getLastName());
-            child.put("firstName", m.getFirstName());
-            child.put("age", String.valueOf(Period.between(m.getBirthDate().toLocalDate(), LocalDate.now()).getYears()));
+            PersonWithAge child = new PersonWithAge();
+
+            child.setFirstName(m.getFirstName());
+            child.setLastName(m.getLastName());
+            child.setAge(Period.between(m.getBirthDate().toLocalDate(), LocalDate.now()).getYears());
 
             logger.debug("[CHILDALERT] Add child: " + child);
             children.add(child);
@@ -143,29 +145,30 @@ public class MedicalRecordReadService {
         logger.debug("[CHILDALERT] Get children: " + children);
 
         for(MedicalRecord m : adultsByFirstNameAndLastName) {
-            Map<String, String> adult = new TreeMap<>();
-            adult.put("lastName", m.getLastName());
-            adult.put("firstName", m.getFirstName());
-            adult.put("age", String.valueOf(Period.between(m.getBirthDate().toLocalDate(), LocalDate.now()).getYears()));
+            PersonWithAge adult = new PersonWithAge();
+
+            adult.setFirstName(m.getFirstName());
+            adult.setLastName(m.getLastName());
+            adult.setAge(Period.between(m.getBirthDate().toLocalDate(), LocalDate.now()).getYears());
 
             logger.debug("[CHILD-ALERT] Add adult: " + adult);
             adults.add(adult);
         }
 
-        Map<String, List<Map<String, String>>> resultList = new TreeMap<>();
+        ResultChildAlert resultChildAlert = new ResultChildAlert();
+        resultChildAlert.setChildren(children);
+        resultChildAlert.setAdults(adults);
 
-        logger.debug("[CHILD-ALERT] Adults data: " + children);
-        resultList.put("children", children);
+        SimpleBeanPropertyFilter personFilter = SimpleBeanPropertyFilter.filterOutAllExcept(
+                "firstName", "lastName", "age");
+        FilterProvider filters = new SimpleFilterProvider().addFilter("personWithAge", personFilter);
+        MappingJacksonValue result = new MappingJacksonValue(resultChildAlert);
+        result.setFilters(filters);
 
-        logger.debug("[CHILDALERT] Get adults: " + adults);
-        resultList.put("adults", adults);
-
-        return resultList;
+        return result;
     }
 
-    public Map<Map<String, Integer>, List<Map<String, String>>>  getPersonsByAddress(String address) {
-
-        // Todo: Return the station number
+    public MappingJacksonValue getPersonsByAddress(String address) {
 
         int station = fireStationReadService.getFireStationByAddress(address).getStation();
 
@@ -185,36 +188,34 @@ public class MedicalRecordReadService {
                 && lastNames.contains(medicalRecord.getLastName()))
                 .collect(Collectors.toList());
 
-        List<Map<String, String>> persons = new ArrayList<>();
+        List<PersonWithMedicalRecords> persons = new ArrayList<>();
 
         medicalRecordsByFirstNameAndLastName.forEach(medicalRecord -> {
-            Map<String, String> person = new TreeMap<String, String>();
+            PersonWithMedicalRecords person = new PersonWithMedicalRecords();
 
-            person.put("lastName", medicalRecord.getLastName());
-            person.put("firstName", medicalRecord.getFirstName());
-            person.put("phone", personsByAddress.stream()
+            person.setFirstName(medicalRecord.getFirstName());
+            person.setLastName(medicalRecord.getLastName());
+            person.setPhone(personsByAddress.stream()
                     .filter(p -> medicalRecord.getFirstName().equals(p.getFirstName()))
                     .filter(p -> medicalRecord.getLastName().equals(p.getLastName()))
                     .map(Person::getPhone)
                     .collect(Collectors.joining()));
-
-            personsByAddress.stream()
-                    .map(Person::getPhone)
-                    .forEach(phone -> logger.debug("[FIREALERT] " + medicalRecord.getFirstName() + "'s phone: " + phone));
-
-            person.put("age", String.valueOf(Period.between(medicalRecord.getBirthDate().toLocalDate()
-                    , LocalDate.now()).getYears()));
-            person.put("allergies", medicalRecord.getAllergies().toString());
-            person.put("medications", medicalRecord.getMedications().toString());
+            person.setAge(Period.between(medicalRecord.getBirthDate().toLocalDate()
+                    , LocalDate.now()).getYears());
+            person.setMedications(medicalRecord.getMedications());
+            person.setAllergies(medicalRecord.getAllergies());
             persons.add(person);
         });
 
-        Map<String, Integer> stationDisplay = new TreeMap<>();
-        stationDisplay.put("station", station);
+        ResultFire resultFire = new ResultFire();
+        resultFire.setStation(station);
+        resultFire.setPersons(persons);
 
-        Map<Map<String, Integer>, List<Map<String, String>>> result
-                = new HashMap<Map<String, Integer>, List<Map<String, String>>>();
-        result.put(stationDisplay, persons);
+        SimpleBeanPropertyFilter personFilter = SimpleBeanPropertyFilter.filterOutAllExcept(
+                "firstName", "lastName", "phone", "age", "medications", "allergies");
+        FilterProvider filterList = new SimpleFilterProvider().addFilter("personWithMedicalRecordsFilter", personFilter);
+        MappingJacksonValue result = new MappingJacksonValue(resultFire);
+        result.setFilters(filterList);
 
         return result;
     }

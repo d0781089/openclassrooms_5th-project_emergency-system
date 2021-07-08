@@ -79,11 +79,11 @@ public class PersonReadService {
             personsFiltered.add(person);
         });
 
-        SimpleBeanPropertyFilter personInfoFilter = SimpleBeanPropertyFilter.filterOutAllExcept(
+        SimpleBeanPropertyFilter personFilter = SimpleBeanPropertyFilter.filterOutAllExcept(
                 "firstName", "lastName", "address", "age", "email", "medications", "allergies");
-        FilterProvider filterList = new SimpleFilterProvider().addFilter("personWithMedicalRecordsFilter", personInfoFilter);
+        FilterProvider filters = new SimpleFilterProvider().addFilter("personWithMedicalRecordsFilter", personFilter);
         MappingJacksonValue result  = new MappingJacksonValue(personsFiltered);
-        result.setFilters(filterList);
+        result.setFilters(filters);
 
         return result;
     }
@@ -141,11 +141,11 @@ public class PersonReadService {
             });
         });
 
-        SimpleBeanPropertyFilter personFloodFilter = SimpleBeanPropertyFilter.filterOutAllExcept(
+        SimpleBeanPropertyFilter personFilter = SimpleBeanPropertyFilter.filterOutAllExcept(
                 "firstName", "lastName", "phone", "age", "medications", "allergies");
-        FilterProvider filterList = new SimpleFilterProvider().addFilter("personWithMedicalRecordsFilter", personFloodFilter);
+        FilterProvider filters = new SimpleFilterProvider().addFilter("personWithMedicalRecordsFilter", personFilter);
         MappingJacksonValue result = new MappingJacksonValue(personsByAddressResult);
-        result.setFilters(filterList);
+        result.setFilters(filters);
 
         return result;
     }

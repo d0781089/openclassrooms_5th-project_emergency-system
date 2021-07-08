@@ -14,7 +14,7 @@ import java.util.Map;
 @NoArgsConstructor
 public class ResultByFireStation {
 
-    private int children;
-    private int adults;
-    private List<Person> list = new ArrayList<>();
+    private int childrenCount;
+    private int adultsCount;
+    private List<Person> persons;
 }

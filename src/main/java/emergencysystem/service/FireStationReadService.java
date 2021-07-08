@@ -83,15 +83,15 @@ public class FireStationReadService {
         logger.debug("[COVERED] Count children and adults: " + countOfChildrenAndAdults);
 
         ResultByFireStation resultByFireStation = new ResultByFireStation();
-        resultByFireStation.setChildren(countOfChildrenAndAdults.get("children"));
-        resultByFireStation.setAdults(countOfChildrenAndAdults.get("adults"));
-        resultByFireStation.setList(persons);
+        resultByFireStation.setChildrenCount(countOfChildrenAndAdults.get("children"));
+        resultByFireStation.setAdultsCount(countOfChildrenAndAdults.get("adults"));
+        resultByFireStation.setPersons(persons);
 
-        SimpleBeanPropertyFilter personByStationFilter = SimpleBeanPropertyFilter.filterOutAllExcept(
+        SimpleBeanPropertyFilter personFilter = SimpleBeanPropertyFilter.filterOutAllExcept(
                 "firstName", "lastName", "address", "phone");
-        FilterProvider filterList = new SimpleFilterProvider().addFilter("personFilter", personByStationFilter);
+        FilterProvider filters = new SimpleFilterProvider().addFilter("personFilter", personFilter);
         MappingJacksonValue result = new MappingJacksonValue(resultByFireStation);
-        result.setFilters(filterList);
+        result.setFilters(filters);
 
         return result;
     }

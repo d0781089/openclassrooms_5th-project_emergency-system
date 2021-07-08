@@ -6,6 +6,7 @@ import emergencysystem.service.MedicalRecordDeletionService;
 import emergencysystem.service.MedicalRecordReadService;
 import emergencysystem.service.MedicalRecordUpdateService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -60,13 +61,13 @@ public class MedicalRecordController {
     }
 
     @GetMapping("/childAlert")
-    public Map<String, List<Map<String, String>>> getChildrenByAddress(@RequestParam String address) {
+    public MappingJacksonValue getChildrenByAddress(@RequestParam String address) {
 
         return medicalRecordReadService.getChildrenByAddress(address);
     }
 
     @GetMapping("/fire")
-    public Map<Map<String, Integer>, List<Map<String, String>>> getPersonsByAddress(@RequestParam String address) {
+    public MappingJacksonValue getPersonsByAddress(@RequestParam String address) {
 
         return medicalRecordReadService.getPersonsByAddress(address);
     }
