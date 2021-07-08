@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResultFire {
+public class ResultFireAlert {
 
     private int station;
     private List<PersonWithMedicalRecords> persons;

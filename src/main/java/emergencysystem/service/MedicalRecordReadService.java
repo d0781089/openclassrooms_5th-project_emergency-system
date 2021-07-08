@@ -161,7 +161,7 @@ public class MedicalRecordReadService {
 
         SimpleBeanPropertyFilter personFilter = SimpleBeanPropertyFilter.filterOutAllExcept(
                 "firstName", "lastName", "age");
-        FilterProvider filters = new SimpleFilterProvider().addFilter("personWithAge", personFilter);
+        FilterProvider filters = new SimpleFilterProvider().addFilter("personWithAgeFilter", personFilter);
         MappingJacksonValue result = new MappingJacksonValue(resultChildAlert);
         result.setFilters(filters);
 
@@ -207,14 +207,14 @@ public class MedicalRecordReadService {
             persons.add(person);
         });
 
-        ResultFire resultFire = new ResultFire();
-        resultFire.setStation(station);
-        resultFire.setPersons(persons);
+        ResultFireAlert resultFireAlert = new ResultFireAlert();
+        resultFireAlert.setStation(station);
+        resultFireAlert.setPersons(persons);
 
         SimpleBeanPropertyFilter personFilter = SimpleBeanPropertyFilter.filterOutAllExcept(
                 "firstName", "lastName", "phone", "age", "medications", "allergies");
         FilterProvider filterList = new SimpleFilterProvider().addFilter("personWithMedicalRecordsFilter", personFilter);
-        MappingJacksonValue result = new MappingJacksonValue(resultFire);
+        MappingJacksonValue result = new MappingJacksonValue(resultFireAlert);
         result.setFilters(filterList);
 
         return result;
