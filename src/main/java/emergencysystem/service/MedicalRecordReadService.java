@@ -38,40 +38,6 @@ public class MedicalRecordReadService {
         return medicalRecordRepository.findById(id).get();
     }
 
-    public MedicalRecord createMedicalRecord(MedicalRecord medicalRecord) {
-
-        return medicalRecordRepository.save(medicalRecord);
-    }
-
-    public List<MedicalRecord> createMedicalRecords(List<MedicalRecord> medicalRecords) {
-
-        return medicalRecordRepository.saveAll(medicalRecords);
-    }
-
-    public MedicalRecord updateMedicalRecord(MedicalRecord medicalRecord) {
-
-        MedicalRecord medicalRecordUpdated;
-        Optional<MedicalRecord> medicalRecordOptional = medicalRecordRepository.findById(medicalRecord.getId());
-
-        if(medicalRecordOptional.isPresent()) {
-            medicalRecordUpdated = medicalRecordOptional.get();
-            medicalRecordUpdated.setBirthDate(medicalRecord.getBirthDate());
-            medicalRecordUpdated.setMedications(medicalRecord.getMedications());
-            medicalRecordUpdated.setAllergies(medicalRecord.getAllergies());
-            medicalRecordRepository.save(medicalRecordUpdated);
-        } else {
-            return new MedicalRecord();
-        }
-        return medicalRecordUpdated;
-    }
-
-    public String deleteMedicalRecord(Long id) {
-
-        medicalRecordRepository.deleteById(id);
-
-        return "The medical record was deleted successfully.";
-    }
-
     public List<MedicalRecord> getByFirstNameAndLastName(List<Person> persons) {
 
         List<String> firstNames = persons.stream()

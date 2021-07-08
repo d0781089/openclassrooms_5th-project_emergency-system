@@ -38,6 +38,8 @@ public class PersonController {
     private FireStationService fireStationService;
 
     @Autowired
+    private MedicalRecordCreationService medicalRecordCreationService;
+    @Autowired
     private MedicalRecordReadService medicalRecordReadService;
 
     private static final Logger logger = LogManager.getLogger(PersonReadService.class);
@@ -145,7 +147,7 @@ public class PersonController {
 
         personCreationService.createPersons(persons);
         fireStationService.createFireStations(fireStations);
-        medicalRecordReadService.createMedicalRecords(medicalRecords);
+        medicalRecordCreationService.createMedicalRecords(medicalRecords);
 
         return Paths.get(file).getFileName() + " was successfully initialized!";
     }

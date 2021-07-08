@@ -1,7 +1,10 @@
 package emergencysystem.controller;
 
 import emergencysystem.model.MedicalRecord;
+import emergencysystem.service.MedicalRecordCreationService;
+import emergencysystem.service.MedicalRecordDeletionService;
 import emergencysystem.service.MedicalRecordReadService;
+import emergencysystem.service.MedicalRecordUpdateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,7 +15,13 @@ import java.util.Map;
 public class MedicalRecordController {
 
     @Autowired
+    private MedicalRecordCreationService medicalRecordCreationService;
+    @Autowired
     private MedicalRecordReadService medicalRecordReadService;
+    @Autowired
+    private MedicalRecordUpdateService medicalRecordUpdateService;
+    @Autowired
+    private MedicalRecordDeletionService medicalRecordDeletionService;
 
     @GetMapping("/medicalRecords")
     public List<MedicalRecord> getMedicalRecords() {
@@ -29,25 +38,25 @@ public class MedicalRecordController {
     @PostMapping("/createMedicalRecord")
     public MedicalRecord createMedicalRecord(@RequestBody MedicalRecord medicalRecord) {
 
-        return medicalRecordReadService.createMedicalRecord(medicalRecord);
+        return medicalRecordCreationService.createMedicalRecord(medicalRecord);
     }
 
     @PostMapping("/createMedicalRecords")
     public List<MedicalRecord> createMedicalRecord(@RequestBody List<MedicalRecord> medicalRecords) {
 
-        return medicalRecordReadService.createMedicalRecords(medicalRecords);
+        return medicalRecordCreationService.createMedicalRecords(medicalRecords);
     }
 
     @PutMapping("/updateMedicalRecord")
     public MedicalRecord updateMedicalRecord(@RequestBody MedicalRecord medicalRecord) {
 
-        return medicalRecordReadService.updateMedicalRecord(medicalRecord);
+        return medicalRecordUpdateService.updateMedicalRecord(medicalRecord);
     }
 
     @DeleteMapping("/medicalRecords/{id}")
     public String deleteMedicalRecordById(@PathVariable Long id) {
 
-        return medicalRecordReadService.deleteMedicalRecord(id);
+        return medicalRecordDeletionService.deleteMedicalRecord(id);
     }
 
     @GetMapping("/childAlert")
