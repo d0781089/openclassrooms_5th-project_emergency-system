@@ -1,12 +1,15 @@
 package emergencysystem.service;
 
-import emergencysystem.model.FireStation;
-import emergencysystem.model.MedicalRecord;
-import emergencysystem.model.Person;
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import emergencysystem.model.*;
 import emergencysystem.dao.PersonRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.engine.spi.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -45,7 +48,7 @@ public class PersonReadService {
         return personRepository.getByAddress(address);
     }
 
-    public List<Map<String, String>> getPersonsByFirstNameAndLastName(String firstName, String lastName) {
+    public MappingJacksonValue getPersonsByFirstNameAndLastName(String firstName, String lastName) {
 
         List<Person> persons = personRepository.getByFirstNameAndLastName(firstName, lastName);
         logger.debug("[PERSONINFO] Retrieve persons: " + persons);
@@ -53,28 +56,34 @@ public class PersonReadService {
         List<MedicalRecord> medicalRecords = medicalRecordReadService.getMedicalRecords();
         logger.debug("[PERSONINFO] Retrieve medical records: " + medicalRecords);
 
-        List<Map<String, String>> result = new ArrayList<>();
+        List<PersonWithMedicalRecords> personsFiltered = new ArrayList<>();
 
         persons.forEach( p -> {
-            Map<String, String> person = new TreeMap<>();
+            PersonWithMedicalRecords person = new PersonWithMedicalRecords();
 
-            person.put("firstName", p.getFirstName());
-            person.put("lastName", p.getLastName());
-            person.put("address", p.getAddress());
-            person.put("email", p.getEmail());
+            person.setFirstName(p.getFirstName());
+            person.setLastName(p.getLastName());
+            person.setAddress(p.getAddress());
+            person.setEmail(p.getEmail());
             medicalRecords.stream()
                     .filter(m -> firstName.equals(m.getFirstName()))
                     .filter(m -> lastName.equals(m.getLastName()))
                     .forEach(m -> {
-                        person.put("age", String.valueOf(Period.between(m.getBirthDate().toLocalDate()
-                                , LocalDate.now()).getYears()));
-                        person.put("medications", m.getMedications().toString());
-                        person.put("allergies", m.getAllergies().toString());
+                        person.setAge(Period.between(m.getBirthDate().toLocalDate()
+                                , LocalDate.now()).getYears());
+                        person.setMedications(m.getMedications());
+                        person.setAllergies(m.getAllergies());
                     });
 
             logger.debug("[PERSONINFO] Add person: " + person);
-            result.add(person);
+            personsFiltered.add(person);
         });
+
+        SimpleBeanPropertyFilter personInfoFilter = SimpleBeanPropertyFilter.filterOutAllExcept(
+                "firstName", "lastName", "address", "age", "email", "medications", "allergies");
+        FilterProvider filterList = new SimpleFilterProvider().addFilter("personWithMedicalRecordsFilter", personInfoFilter);
+        MappingJacksonValue result  = new MappingJacksonValue(personsFiltered);
+        result.setFilters(filterList);
 
         return result;
     }
@@ -88,10 +97,9 @@ public class PersonReadService {
         return emails;
     }
 
-    public Map<String, List<Map<String, String>>> getPersonsByStations(List<Integer> stations) {
+    public MappingJacksonValue getPersonsByStations(List<Integer> stations) {
 
-        Map<String, List<Map<String, String>>> result = new TreeMap<>();
-        List<Map<String, String>> personsByAddress = new ArrayList<>();
+        Map<String, List<PersonWithMedicalRecords>> personsByAddressResult = new HashMap<>();
 
         stations.forEach(station -> {
             List<FireStation> fireStations = fireStationReadService.getFireStationByStation(station);
@@ -101,6 +109,8 @@ public class PersonReadService {
                     .collect(Collectors.toSet());
 
             addressesByStation.forEach( address -> {
+                List<PersonWithMedicalRecords> personsByAddress = new ArrayList<>();
+
                 logger.debug("[FLOOD] Get address: " + address);
 
                 List<Person> persons = personRepository.getByAddress(address);
@@ -110,26 +120,32 @@ public class PersonReadService {
                 logger.debug("[FLOOD] Get medical records: " + medicalRecords);
 
                 medicalRecords.forEach(medicalRecord -> {
-                    Map<String, String> person = new TreeMap<>();
+                    PersonWithMedicalRecords person = new PersonWithMedicalRecords();
 
-                    person.put("firstName", medicalRecord.getFirstName());
-                    person.put("lastName", medicalRecord.getLastName());
-                    person.put("phone", persons.stream()
+                    person.setFirstName(medicalRecord.getFirstName());
+                    person.setLastName(medicalRecord.getLastName());
+                    person.setPhone(persons.stream()
                             .filter(p -> medicalRecord.getFirstName().equals(p.getFirstName()))
                             .filter(p -> medicalRecord.getLastName().equals(p.getLastName()))
                             .map(Person::getPhone)
                             .collect(Collectors.joining()));
-                    person.put("age", String.valueOf(Period.between(medicalRecord.getBirthDate().toLocalDate()
-                            , LocalDate.now()).getYears()));
-                    person.put("medications", medicalRecord.getMedications().toString());
-                    person.put("allergies", medicalRecord.getAllergies().toString());
+                    person.setAge(Period.between(medicalRecord.getBirthDate().toLocalDate()
+                            , LocalDate.now()).getYears());
+                    person.setMedications(medicalRecord.getMedications());
+                    person.setAllergies(medicalRecord.getAllergies());
 
                     personsByAddress.add(person);
                 });
 
-                result.put(address, personsByAddress);
+                personsByAddressResult.put(address, personsByAddress);
             });
         });
+
+        SimpleBeanPropertyFilter personFloodFilter = SimpleBeanPropertyFilter.filterOutAllExcept(
+                "firstName", "lastName", "phone", "age", "medications", "allergies");
+        FilterProvider filterList = new SimpleFilterProvider().addFilter("personWithMedicalRecordsFilter", personFloodFilter);
+        MappingJacksonValue result = new MappingJacksonValue(personsByAddressResult);
+        result.setFilters(filterList);
 
         return result;
     }

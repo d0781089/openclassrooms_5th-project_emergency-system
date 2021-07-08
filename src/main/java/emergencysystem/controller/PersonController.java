@@ -3,13 +3,12 @@ package emergencysystem.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import emergencysystem.model.FireStation;
-import emergencysystem.model.MedicalRecord;
-import emergencysystem.model.Person;
+import emergencysystem.model.*;
 import emergencysystem.service.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -82,13 +81,13 @@ public class PersonController {
     }
 
     @GetMapping("/flood/stations")
-    public Map<String, List<Map<String, String>>> getPersonsByStations(@RequestParam List<Integer> stations) {
+    public MappingJacksonValue getPersonsByStations(@RequestParam List<Integer> stations) {
 
         return personReadService.getPersonsByStations(stations);
     }
 
     @GetMapping("/personInfo")
-    public List<Map<String, String>> getPersonsByFirstNameAndLastName(@RequestParam String firstName, String lastName) {
+    public MappingJacksonValue getPersonsByFirstNameAndLastName(@RequestParam String firstName, String lastName) {
 
         logger.debug("[PERSONINFO] " + firstName + " " + lastName);
 
