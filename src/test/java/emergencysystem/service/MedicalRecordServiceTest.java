@@ -162,9 +162,9 @@ public class MedicalRecordServiceTest {
 
         MedicalRecord medicalRecordUpdated = new MedicalRecord();
         medicalRecordUpdated.setId(1L);
-        medicalRecordUpdated.setFirstName("Vernon");
-        medicalRecordUpdated.setLastName("DERSLEY");
-        medicalRecordUpdated.setBirthDate(Date.valueOf(LocalDate.now().minusYears(50)));
+        medicalRecordUpdated.setFirstName("Harry");
+        medicalRecordUpdated.setLastName("POTTER");
+        medicalRecordUpdated.setBirthDate(Date.valueOf(LocalDate.now().minusYears(18)));
         medicalRecordUpdated.setMedications(medicationsAndAllergies);
         medicalRecordUpdated.setAllergies(medicationsAndAllergies);
 

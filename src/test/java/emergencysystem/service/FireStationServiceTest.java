@@ -135,7 +135,7 @@ public class FireStationServiceTest {
         FireStation fireStationUpdated = new FireStation();
         fireStationUpdated.setId(1L);
         fireStationUpdated.setStation(5);
-        fireStationUpdated.setAddress("29, Privet Drive");
+        fireStationUpdated.setAddress("19, Privet Drive");
 
         Mockito.when(fireStationUpdateService.updateFireStation(fireStation)).thenReturn(fireStationUpdated);
 
