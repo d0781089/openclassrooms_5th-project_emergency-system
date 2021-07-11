@@ -1,6 +1,5 @@
 package emergencysystem.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,7 +15,7 @@ import java.util.List;
 @Entity
 public class MedicalRecord {
 
-    @JsonIgnore
+    //@JsonIgnore
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;

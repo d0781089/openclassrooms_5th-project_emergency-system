@@ -12,15 +12,9 @@ class EmergencySystemApplicationTests {
 
 	@Test
 	void shouldLogMyMessage() {
-		String myMessage = "Greetings!";
-		System.out.println(myMessage);
 
-		logger.trace("The user has just been greeted!");
-		logger.debug("The user has just been greeted!");
-		logger.info("The user has just been greeted!");
-		logger.warn("The user has just been greeted!");
-		logger.error("The user has just been greeted!");
-		logger.fatal("The user has just been greeted!");
+		String myMessage = "You're a Wizard, Harry!";
+
+		logger.debug(myMessage);
 	}
-
 }

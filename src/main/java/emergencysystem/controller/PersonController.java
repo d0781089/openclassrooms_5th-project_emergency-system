@@ -75,9 +75,9 @@ public class PersonController {
     }
 
     @DeleteMapping("/persons/{id}")
-    public String deletePersonById(@PathVariable Long id) {
+    public void deletePersonById(@PathVariable Long id) {
 
-        return personDeletionService.deletePersonById(id);
+        personDeletionService.deletePersonById(id);
     }
 
     @GetMapping("/flood/stations")

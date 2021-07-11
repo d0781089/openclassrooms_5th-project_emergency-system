@@ -10,10 +10,8 @@ public class FireStationDeletionService {
     @Autowired
     private FireStationRepository fireStationRepository;
 
-    public String deleteFireStation(Long id) {
+    public void deleteFireStation(Long id) {
 
         fireStationRepository.deleteById(id);
-
-        return "The fire station was deleted successfully.";
     }
 }

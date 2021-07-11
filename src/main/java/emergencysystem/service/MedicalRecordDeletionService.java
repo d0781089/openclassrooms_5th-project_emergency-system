@@ -10,10 +10,8 @@ public class MedicalRecordDeletionService {
     @Autowired
     private MedicalRecordRepository medicalRecordRepository;
 
-    public String deleteMedicalRecord(Long id) {
+    public void deleteMedicalRecord(Long id) {
 
         medicalRecordRepository.deleteById(id);
-
-        return "The medical record was deleted successfully.";
     }
 }

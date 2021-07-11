@@ -16,5 +16,5 @@ public class ResultByFireStation {
 
     private int childrenCount;
     private int adultsCount;
-    private List<Person> persons;
+    private List<PersonWithAge> persons;
 }

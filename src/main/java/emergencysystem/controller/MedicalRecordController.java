@@ -55,9 +55,9 @@ public class MedicalRecordController {
     }
 
     @DeleteMapping("/medicalRecords/{id}")
-    public String deleteMedicalRecordById(@PathVariable Long id) {
+    public void deleteMedicalRecordById(@PathVariable Long id) {
 
-        return medicalRecordDeletionService.deleteMedicalRecord(id);
+        medicalRecordDeletionService.deleteMedicalRecord(id);
     }
 
     @GetMapping("/childAlert")

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import emergencysystem.dao.FireStationRepository;
 import emergencysystem.model.FireStation;
 import emergencysystem.model.Person;
+import emergencysystem.model.PersonWithAge;
 import emergencysystem.model.ResultByFireStation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -61,13 +62,13 @@ public class FireStationReadService {
                 .collect(Collectors.toSet());
 
         List<Person> personsByAddress = new ArrayList<>();
-        List<Person> persons = new ArrayList<>();
+        List<PersonWithAge> persons = new ArrayList<>();
 
         addressesByStation.forEach(address -> {
             personsByAddress.addAll(personReadService.getPersonsByAddress(address));
 
             personsByAddress.forEach(personByAddress -> {
-                Person person = new Person();
+                PersonWithAge person = new PersonWithAge();
 
                 person.setFirstName(personByAddress.getFirstName());
                 person.setLastName(personByAddress.getLastName());
@@ -89,7 +90,7 @@ public class FireStationReadService {
 
         SimpleBeanPropertyFilter personFilter = SimpleBeanPropertyFilter.filterOutAllExcept(
                 "firstName", "lastName", "address", "phone");
-        FilterProvider filters = new SimpleFilterProvider().addFilter("personFilter", personFilter);
+        FilterProvider filters = new SimpleFilterProvider().addFilter("personWithAgeFilter", personFilter);
         MappingJacksonValue result = new MappingJacksonValue(resultByFireStation);
         result.setFilters(filters);
 

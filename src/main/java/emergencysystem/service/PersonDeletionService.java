@@ -10,10 +10,8 @@ public class PersonDeletionService {
     @Autowired
     private PersonRepository personRepository;
 
-    public String deletePersonById(Long id) {
+    public void deletePersonById(Long id) {
 
-        personRepository.deleteById(id);
-
-        return "The person(id=" + id + ") was deleted successfully.";
+        personRepository.deleteById(id);;
     }
 }
