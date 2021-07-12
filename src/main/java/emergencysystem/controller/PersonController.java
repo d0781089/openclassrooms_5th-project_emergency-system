@@ -101,7 +101,7 @@ public class PersonController {
     }
 
     @GetMapping("/init")
-    public String initializeData(@RequestParam String fileName) throws IOException {
+    public void initializeData(@RequestParam String fileName) throws IOException {
 
         String file = "src/main/resources/" + fileName;
 
@@ -148,7 +148,5 @@ public class PersonController {
         personCreationService.createPersons(persons);
         fireStationCreationService.createFireStations(fireStations);
         medicalRecordCreationService.createMedicalRecords(medicalRecords);
-
-        return Paths.get(file).getFileName() + " was successfully initialized!";
     }
 }

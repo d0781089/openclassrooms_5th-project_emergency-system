@@ -2,6 +2,7 @@ package emergencysystem.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import emergencysystem.controller.MedicalRecordController;
+import emergencysystem.model.FireStation;
 import emergencysystem.model.MedicalRecord;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -84,97 +85,6 @@ public class MedicalRecordServiceTest {
         String expectedResponse = objectMapper.writeValueAsString(medicalRecord);
 
         assertEquals(actualResponse, expectedResponse);
-    }
-
-    @Test
-    public void shouldCreateMedicalRecord() throws Exception {
-
-        MedicalRecord medicalRecord = new MedicalRecord();
-        medicalRecord.setFirstName("Harry");
-        medicalRecord.setLastName("POTTER");
-        medicalRecord.setBirthDate(Date.valueOf(LocalDate.now().minusYears(12)));
-        List<String> medicationsAndAllergies = new ArrayList<>();
-        medicalRecord.setMedications(medicationsAndAllergies);
-        medicalRecord.setAllergies(medicationsAndAllergies);
-
-        MedicalRecord medicalRecordSaved = new MedicalRecord();
-        medicalRecordSaved.setId(1L);
-        medicalRecordSaved.setFirstName("Harry");
-        medicalRecordSaved.setLastName("POTTER");
-        medicalRecordSaved.setBirthDate(Date.valueOf(LocalDate.now().minusYears(12)));
-        medicalRecordSaved.setMedications(medicationsAndAllergies);
-        medicalRecordSaved.setAllergies(medicationsAndAllergies);
-
-        Mockito.when(medicalRecordCreationService.createMedicalRecord(medicalRecord)).thenReturn(medicalRecordSaved);
-
-        mockMvc.perform(post("/createMedicalRecord")
-                .contentType("application/json")
-                .content(objectMapper.writeValueAsString(medicalRecord))
-        ).andExpect(status().isOk())
-                .andExpect(content().string(objectMapper.writeValueAsString(medicalRecordSaved))).andReturn();
-    }
-
-    @Test
-    public void shouldCreateMedicalRecords() throws Exception {
-
-        MedicalRecord medicalRecord = new MedicalRecord();
-        medicalRecord.setFirstName("Harry");
-        medicalRecord.setLastName("POTTER");
-        medicalRecord.setBirthDate(Date.valueOf(LocalDate.now().minusYears(12)));
-        List<String> medicationsAndAllergies = new ArrayList<>();
-        medicalRecord.setMedications(medicationsAndAllergies);
-        medicalRecord.setAllergies(medicationsAndAllergies);
-
-        List<MedicalRecord> medicalRecords = new ArrayList<>();
-        medicalRecords.add(medicalRecord);
-
-        MedicalRecord medicalRecordSaved = new MedicalRecord();
-        medicalRecordSaved.setId(1L);
-        medicalRecordSaved.setFirstName("Harry");
-        medicalRecordSaved.setLastName("POTTER");
-        medicalRecordSaved.setBirthDate(Date.valueOf(LocalDate.now().minusYears(12)));
-        medicalRecordSaved.setMedications(medicationsAndAllergies);
-        medicalRecordSaved.setAllergies(medicationsAndAllergies);
-
-        List<MedicalRecord> medicalRecordsSaved = new ArrayList<>();
-        medicalRecordsSaved.add(medicalRecordSaved);
-
-        Mockito.when(medicalRecordCreationService.createMedicalRecords(medicalRecords)).thenReturn(medicalRecordsSaved);
-
-        mockMvc.perform(post("/createMedicalRecords")
-                .contentType("application/json")
-                .content(objectMapper.writeValueAsString(medicalRecords))
-        ).andExpect(status().isOk())
-                .andExpect(content().string(objectMapper.writeValueAsString(medicalRecordsSaved))).andReturn();
-    }
-
-    @Test
-    public void shouldUpdateMedicalRecord() throws Exception {
-
-        MedicalRecord medicalRecord = new MedicalRecord();
-        medicalRecord.setId(1L);
-        medicalRecord.setFirstName("Harry");
-        medicalRecord.setLastName("POTTER");
-        medicalRecord.setBirthDate(Date.valueOf(LocalDate.now().minusYears(12)));
-        List<String> medicationsAndAllergies = new ArrayList<>();
-        medicalRecord.setMedications(medicationsAndAllergies);
-        medicalRecord.setAllergies(medicationsAndAllergies);
-
-        MedicalRecord medicalRecordUpdated = new MedicalRecord();
-        medicalRecordUpdated.setId(1L);
-        medicalRecordUpdated.setFirstName("Harry");
-        medicalRecordUpdated.setLastName("POTTER");
-        medicalRecordUpdated.setBirthDate(Date.valueOf(LocalDate.now().minusYears(18)));
-        medicalRecordUpdated.setMedications(medicationsAndAllergies);
-        medicalRecordUpdated.setAllergies(medicationsAndAllergies);
-
-        Mockito.when(medicalRecordUpdateService.updateMedicalRecord(medicalRecord)).thenReturn(medicalRecordUpdated);
-
-        mockMvc.perform(put("/updateMedicalRecord")
-                .contentType("application/json")
-                .content(objectMapper.writeValueAsString(medicalRecord)))
-                .andExpect(status().isOk())
-                .andExpect(content().string(objectMapper.writeValueAsString(medicalRecordUpdated)));
     }
 
     @Test

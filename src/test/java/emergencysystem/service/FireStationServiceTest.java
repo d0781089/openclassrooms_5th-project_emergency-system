@@ -84,9 +84,9 @@ public class FireStationServiceTest {
         fireStation.setAddress("29, Privet Drive");
 
         FireStation fireStationSaved = new FireStation();
-        fireStation.setId(1L);
-        fireStation.setStation(5);
-        fireStation.setAddress("29, Privet Drive");
+        fireStationSaved.setId(1L);
+        fireStationSaved.setStation(5);
+        fireStationSaved.setAddress("29, Privet Drive");
 
         Mockito.when(fireStationCreationService.createFireStation(fireStation)).thenReturn(fireStationSaved);
 
@@ -119,8 +119,7 @@ public class FireStationServiceTest {
 
         mockMvc.perform(post("/createFireStations")
                 .contentType("application/json")
-                .content(objectMapper.writeValueAsString(fireStations))
-        ).andExpect(status().isOk())
+                .content(objectMapper.writeValueAsString(fireStations))).andExpect(status().isOk())
                 .andExpect(content().string(objectMapper.writeValueAsString(fireStationsSaved))).andReturn();
     }
 
