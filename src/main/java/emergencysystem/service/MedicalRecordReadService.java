@@ -170,7 +170,11 @@ public class MedicalRecordReadService {
 
     public MappingJacksonValue getPersonsByAddress(String address) {
 
-        int station = fireStationReadService.getFireStationByAddress(address).getStation();
+        int station = 0;
+        Optional<FireStation> optionalFireStation = Optional.ofNullable(fireStationReadService.findFireStationByAddress(address));
+        if(optionalFireStation.isPresent()) {
+            station = optionalFireStation.get().getStation();
+        }
 
         List<Person> personsByAddress = personReadService.getPersonsByAddress(address);
         List<MedicalRecord> medicalRecords = medicalRecordRepository.findAll();

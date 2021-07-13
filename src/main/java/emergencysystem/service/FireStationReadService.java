@@ -46,6 +46,11 @@ public class FireStationReadService {
         return fireStationRepository.getByAddress(address);
     }
 
+    public FireStation findFireStationByAddress(String address) {
+
+        return fireStationRepository.findByAddress(address);
+    }
+
     public List<FireStation> getFireStationByStation(int station) {
 
         return fireStationRepository.getByStation(station);

@@ -103,50 +103,6 @@ public class PersonController {
     @GetMapping("/init")
     public void initializeData(@RequestParam String fileName) throws IOException {
 
-        String file = "src/main/resources/" + fileName;
-
-        String json = new String(Files.readAllBytes(Paths.get(file)));
-        JsonNode jsonNode = jsonParseService.parse(json);
-
-        List<Person> persons = new ArrayList<>();
-        List<FireStation> fireStations = new ArrayList<>();
-        List<MedicalRecord> medicalRecords = new ArrayList<>();
-
-        jsonNode.get("persons").forEach(p -> {
-            Person person = new Person();
-            try {
-                person = jsonReadService.read(p, Person.class);
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
-            persons.add(person);
-        });
-
-        jsonNode.get("fireStations").forEach(f -> {
-            FireStation fireStation = new FireStation();
-            try {
-                fireStation = jsonReadService.read(f, FireStation.class);
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
-            fireStations.add(fireStation);
-        });
-
-        jsonNode.get("medicalRecords").forEach(m -> {
-            ObjectNode o = (ObjectNode) m;
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-            o.put("birthDate", String.valueOf(LocalDate.parse(m.get("birthDate").asText(), formatter)));
-            MedicalRecord medicalRecord = new MedicalRecord();
-            try {
-                medicalRecord = jsonReadService.read(o, MedicalRecord.class);
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
-            medicalRecords.add(medicalRecord);
-        });
-
-        personCreationService.createPersons(persons);
-        fireStationCreationService.createFireStations(fireStations);
-        medicalRecordCreationService.createMedicalRecords(medicalRecords);
+        personReadService.initializeData(fileName);
     }
 }

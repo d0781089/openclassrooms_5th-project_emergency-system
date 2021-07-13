@@ -1,5 +1,8 @@
 package emergencysystem.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
@@ -11,8 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.Period;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -23,10 +30,22 @@ public class PersonReadService {
     private PersonRepository personRepository;
 
     @Autowired
+    private PersonCreationService personCreationService;
+
+    @Autowired
+    private FireStationCreationService fireStationCreationService;
+    @Autowired
     private FireStationReadService fireStationReadService;
 
     @Autowired
+    private MedicalRecordCreationService medicalRecordCreationService;
+    @Autowired
     private MedicalRecordReadService medicalRecordReadService;
+
+    @Autowired
+    private JsonReadService jsonReadService;
+    @Autowired
+    private JsonParseService jsonParseService;
 
     private static final Logger logger = LogManager.getLogger(PersonReadService.class);
 
@@ -147,5 +166,54 @@ public class PersonReadService {
         result.setFilters(filters);
 
         return result;
+    }
+
+    public void initializeData(String fileName) throws IOException {
+
+        String file = "src/main/resources/" + fileName;
+
+        String json = new String(Files.readAllBytes(Paths.get(file)));
+        JsonNode jsonNode = jsonParseService.parse(json);
+
+        List<Person> persons = new ArrayList<>();
+        List<FireStation> fireStations = new ArrayList<>();
+        List<MedicalRecord> medicalRecords = new ArrayList<>();
+
+        jsonNode.get("persons").forEach(p -> {
+            Person person = new Person();
+            try {
+                person = jsonReadService.read(p, Person.class);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+            persons.add(person);
+        });
+
+        jsonNode.get("fireStations").forEach(f -> {
+            FireStation fireStation = new FireStation();
+            try {
+                fireStation = jsonReadService.read(f, FireStation.class);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+            fireStations.add(fireStation);
+        });
+
+        jsonNode.get("medicalRecords").forEach(m -> {
+            ObjectNode o = (ObjectNode) m;
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+            o.put("birthDate", String.valueOf(LocalDate.parse(m.get("birthDate").asText(), formatter)));
+            MedicalRecord medicalRecord = new MedicalRecord();
+            try {
+                medicalRecord = jsonReadService.read(o, MedicalRecord.class);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+            medicalRecords.add(medicalRecord);
+        });
+
+        personCreationService.createPersons(persons);
+        fireStationCreationService.createFireStations(fireStations);
+        medicalRecordCreationService.createMedicalRecords(medicalRecords);
     }
 }
