@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PersonReadService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">emergency-system</a> &gt; <a href="index.source.html" class="el_package">com.safetynet.emergencysystem.service</a> &gt; <span class="el_source">PersonReadService.java</span></div><h1>PersonReadService.java</h1><pre class="source lang-java linenums">package com.safetynet.emergencysystem.service;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import com.safetynet.emergencysystem.model.*;
+import com.safetynet.emergencysystem.dao.PersonRepository;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.converter.json.MappingJacksonValue;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.stream.Collectors;
+
+@Service
+<span class="fc" id="L27">public class PersonReadService {</span>
+
+    @Autowired
+    private PersonRepository personRepository;
+
+    @Autowired
+    private PersonCreationService personCreationService;
+
+    @Autowired
+    private FireStationCreationService fireStationCreationService;
+    @Autowired
+    private FireStationReadService fireStationReadService;
+
+    @Autowired
+    private MedicalRecordCreationService medicalRecordCreationService;
+    @Autowired
+    private MedicalRecordReadService medicalRecordReadService;
+
+    @Autowired
+    private JsonReadService jsonReadService;
+    @Autowired
+    private JsonParseService jsonParseService;
+
+<span class="fc" id="L50">    private static final Logger logger = LogManager.getLogger(PersonReadService.class);</span>
+
+    public List&lt;Person&gt; getPersons() {
+
+<span class="fc" id="L54">        return personRepository.findAll();</span>
+    }
+
+    public Person getPersonById(Long id) {
+
+<span class="nc" id="L59">        return personRepository.findById(id).get();</span>
+    }
+
+    public List&lt;Person&gt; getPersonsByAddress(String address) {
+
+<span class="fc" id="L64">        logger.debug(&quot;[COVERED] Retrieve fire station address: &quot; + address);</span>
+
+<span class="fc" id="L66">        return personRepository.getByAddress(address);</span>
+    }
+
+    public MappingJacksonValue getPersonsByFirstNameAndLastName(String firstName, String lastName) {
+
+<span class="fc" id="L71">        List&lt;Person&gt; persons = personRepository.getByFirstNameAndLastName(firstName, lastName);</span>
+<span class="fc" id="L72">        logger.debug(&quot;[PERSONINFO] Retrieve persons: &quot; + persons);</span>
+
+<span class="fc" id="L74">        List&lt;MedicalRecord&gt; medicalRecords = medicalRecordReadService.getMedicalRecords();</span>
+<span class="fc" id="L75">        logger.debug(&quot;[PERSONINFO] Retrieve medical records: &quot; + medicalRecords);</span>
+
+<span class="fc" id="L77">        List&lt;PersonWithMedicalRecords&gt; personsFiltered = new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L79">        persons.forEach( p -&gt; {</span>
+<span class="fc" id="L80">            PersonWithMedicalRecords person = new PersonWithMedicalRecords();</span>
+
+<span class="fc" id="L82">            person.setFirstName(p.getFirstName());</span>
+<span class="fc" id="L83">            person.setLastName(p.getLastName());</span>
+<span class="fc" id="L84">            person.setAddress(p.getAddress());</span>
+<span class="fc" id="L85">            person.setEmail(p.getEmail());</span>
+<span class="fc" id="L86">            medicalRecords.stream()</span>
+<span class="fc" id="L87">                    .filter(m -&gt; firstName.equals(m.getFirstName()))</span>
+<span class="fc" id="L88">                    .filter(m -&gt; lastName.equals(m.getLastName()))</span>
+<span class="fc" id="L89">                    .forEach(m -&gt; {</span>
+<span class="fc" id="L90">                        person.setAge(Period.between(m.getBirthDate().toLocalDate()</span>
+<span class="fc" id="L91">                                , LocalDate.now()).getYears());</span>
+<span class="fc" id="L92">                        person.setMedications(m.getMedications());</span>
+<span class="fc" id="L93">                        person.setAllergies(m.getAllergies());</span>
+<span class="fc" id="L94">                    });</span>
+
+<span class="fc" id="L96">            logger.debug(&quot;[PERSONINFO] Add person: &quot; + person);</span>
+<span class="fc" id="L97">            personsFiltered.add(person);</span>
+<span class="fc" id="L98">        });</span>
+
+<span class="fc" id="L100">        SimpleBeanPropertyFilter personFilter = SimpleBeanPropertyFilter.filterOutAllExcept(</span>
+                &quot;firstName&quot;, &quot;lastName&quot;, &quot;address&quot;, &quot;age&quot;, &quot;email&quot;, &quot;medications&quot;, &quot;allergies&quot;);
+<span class="fc" id="L102">        FilterProvider filters = new SimpleFilterProvider().addFilter(&quot;personWithMedicalRecordsFilter&quot;, personFilter);</span>
+<span class="fc" id="L103">        MappingJacksonValue result  = new MappingJacksonValue(personsFiltered);</span>
+<span class="fc" id="L104">        result.setFilters(filters);</span>
+
+<span class="fc" id="L106">        return result;</span>
+    }
+
+    public Set&lt;String&gt; getEmailsByCity(String city) {
+
+<span class="nc" id="L111">        Set&lt;String&gt; emails = personRepository.getByCity(city).stream()</span>
+<span class="nc" id="L112">                .map(Person::getEmail)</span>
+<span class="nc" id="L113">                .collect(Collectors.toSet());</span>
+
+<span class="nc" id="L115">        return emails;</span>
+    }
+
+    public MappingJacksonValue getPersonsByStations(List&lt;Integer&gt; stations) {
+
+<span class="nc" id="L120">        Map&lt;String, List&lt;PersonWithMedicalRecords&gt;&gt; personsByAddressResult = new HashMap&lt;&gt;();</span>
+
+<span class="nc" id="L122">        stations.forEach(station -&gt; {</span>
+<span class="nc" id="L123">            List&lt;FireStation&gt; fireStations = fireStationReadService.getFireStationByStation(station);</span>
+
+<span class="nc" id="L125">            Set&lt;String&gt; addressesByStation = fireStations.stream()</span>
+<span class="nc" id="L126">                    .map(FireStation::getAddress)</span>
+<span class="nc" id="L127">                    .collect(Collectors.toSet());</span>
+
+<span class="nc" id="L129">            addressesByStation.forEach( address -&gt; {</span>
+<span class="nc" id="L130">                List&lt;PersonWithMedicalRecords&gt; personsByAddress = new ArrayList&lt;&gt;();</span>
+
+<span class="nc" id="L132">                logger.debug(&quot;[FLOOD] Get address: &quot; + address);</span>
+
+<span class="nc" id="L134">                List&lt;Person&gt; persons = personRepository.getByAddress(address);</span>
+<span class="nc" id="L135">                logger.debug(&quot;[FLOOD] Get persons: &quot; + persons);</span>
+
+<span class="nc" id="L137">                List&lt;MedicalRecord&gt; medicalRecords = medicalRecordReadService.getByFirstNameAndLastName(persons);</span>
+<span class="nc" id="L138">                logger.debug(&quot;[FLOOD] Get medical records: &quot; + medicalRecords);</span>
+
+<span class="nc" id="L140">                medicalRecords.forEach(medicalRecord -&gt; {</span>
+<span class="nc" id="L141">                    PersonWithMedicalRecords person = new PersonWithMedicalRecords();</span>
+
+<span class="nc" id="L143">                    person.setFirstName(medicalRecord.getFirstName());</span>
+<span class="nc" id="L144">                    person.setLastName(medicalRecord.getLastName());</span>
+<span class="nc" id="L145">                    person.setPhone(persons.stream()</span>
+<span class="nc" id="L146">                            .filter(p -&gt; medicalRecord.getFirstName().equals(p.getFirstName()))</span>
+<span class="nc" id="L147">                            .filter(p -&gt; medicalRecord.getLastName().equals(p.getLastName()))</span>
+<span class="nc" id="L148">                            .map(Person::getPhone)</span>
+<span class="nc" id="L149">                            .collect(Collectors.joining()));</span>
+<span class="nc" id="L150">                    person.setAge(Period.between(medicalRecord.getBirthDate().toLocalDate()</span>
+<span class="nc" id="L151">                            , LocalDate.now()).getYears());</span>
+<span class="nc" id="L152">                    person.setMedications(medicalRecord.getMedications());</span>
+<span class="nc" id="L153">                    person.setAllergies(medicalRecord.getAllergies());</span>
+
+<span class="nc" id="L155">                    personsByAddress.add(person);</span>
+<span class="nc" id="L156">                });</span>
+
+<span class="nc" id="L158">                personsByAddressResult.put(address, personsByAddress);</span>
+<span class="nc" id="L159">            });</span>
+<span class="nc" id="L160">        });</span>
+
+<span class="nc" id="L162">        SimpleBeanPropertyFilter personFilter = SimpleBeanPropertyFilter.filterOutAllExcept(</span>
+                &quot;firstName&quot;, &quot;lastName&quot;, &quot;phone&quot;, &quot;age&quot;, &quot;medications&quot;, &quot;allergies&quot;);
+<span class="nc" id="L164">        FilterProvider filters = new SimpleFilterProvider().addFilter(&quot;personWithMedicalRecordsFilter&quot;, personFilter);</span>
+<span class="nc" id="L165">        MappingJacksonValue result = new MappingJacksonValue(personsByAddressResult);</span>
+<span class="nc" id="L166">        result.setFilters(filters);</span>
+
+<span class="nc" id="L168">        return result;</span>
+    }
+
+    public void initializeData(String fileName) throws IOException {
+
+<span class="fc" id="L173">        String file = &quot;src/main/resources/&quot; + fileName;</span>
+
+<span class="fc" id="L175">        String json = new String(Files.readAllBytes(Paths.get(file)));</span>
+<span class="fc" id="L176">        JsonNode jsonNode = jsonParseService.parse(json);</span>
+
+<span class="fc" id="L178">        List&lt;Person&gt; persons = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L179">        List&lt;FireStation&gt; fireStations = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L180">        List&lt;MedicalRecord&gt; medicalRecords = new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L182">        jsonNode.get(&quot;persons&quot;).forEach(p -&gt; {</span>
+<span class="fc" id="L183">            Person person = new Person();</span>
+            try {
+<span class="fc" id="L185">                person = jsonReadService.read(p, Person.class);</span>
+<span class="nc" id="L186">            } catch (JsonProcessingException e) {</span>
+<span class="nc" id="L187">                e.printStackTrace();</span>
+<span class="fc" id="L188">            }</span>
+<span class="fc" id="L189">            persons.add(person);</span>
+<span class="fc" id="L190">        });</span>
+
+<span class="fc" id="L192">        jsonNode.get(&quot;fireStations&quot;).forEach(f -&gt; {</span>
+<span class="fc" id="L193">            FireStation fireStation = new FireStation();</span>
+            try {
+<span class="fc" id="L195">                fireStation = jsonReadService.read(f, FireStation.class);</span>
+<span class="nc" id="L196">            } catch (JsonProcessingException e) {</span>
+<span class="nc" id="L197">                e.printStackTrace();</span>
+<span class="fc" id="L198">            }</span>
+<span class="fc" id="L199">            fireStations.add(fireStation);</span>
+<span class="fc" id="L200">        });</span>
+
+<span class="fc" id="L202">        jsonNode.get(&quot;medicalRecords&quot;).forEach(m -&gt; {</span>
+<span class="fc" id="L203">            ObjectNode o = (ObjectNode) m;</span>
+<span class="fc" id="L204">            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(&quot;MM/dd/yyyy&quot;);</span>
+<span class="fc" id="L205">            o.put(&quot;birthDate&quot;, String.valueOf(LocalDate.parse(m.get(&quot;birthDate&quot;).asText(), formatter)));</span>
+<span class="fc" id="L206">            MedicalRecord medicalRecord = new MedicalRecord();</span>
+            try {
+<span class="fc" id="L208">                medicalRecord = jsonReadService.read(o, MedicalRecord.class);</span>
+<span class="nc" id="L209">            } catch (JsonProcessingException e) {</span>
+<span class="nc" id="L210">                e.printStackTrace();</span>
+<span class="fc" id="L211">            }</span>
+<span class="fc" id="L212">            medicalRecords.add(medicalRecord);</span>
+<span class="fc" id="L213">        });</span>
+
+<span class="fc" id="L215">        personCreationService.createPersons(persons);</span>
+<span class="fc" id="L216">        fireStationCreationService.createFireStations(fireStations);</span>
+<span class="fc" id="L217">        medicalRecordCreationService.createMedicalRecords(medicalRecords);</span>
+<span class="fc" id="L218">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

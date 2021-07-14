@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MedicalRecordUpdateService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">emergency-system</a> &gt; <a href="index.source.html" class="el_package">com.safetynet.emergencysystem.service</a> &gt; <span class="el_source">MedicalRecordUpdateService.java</span></div><h1>MedicalRecordUpdateService.java</h1><pre class="source lang-java linenums">package com.safetynet.emergencysystem.service;
+
+import com.safetynet.emergencysystem.dao.MedicalRecordRepository;
+import com.safetynet.emergencysystem.model.MedicalRecord;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+
+@Service
+<span class="fc" id="L11">public class MedicalRecordUpdateService {</span>
+
+    @Autowired
+    private MedicalRecordRepository medicalRecordRepository;
+
+    public MedicalRecord updateMedicalRecord(MedicalRecord medicalRecord) {
+
+        MedicalRecord medicalRecordUpdated;
+<span class="nc" id="L19">        Optional&lt;MedicalRecord&gt; medicalRecordOptional = medicalRecordRepository.findById(medicalRecord.getId());</span>
+
+<span class="nc bnc" id="L21" title="All 2 branches missed.">        if(medicalRecordOptional.isPresent()) {</span>
+<span class="nc" id="L22">            medicalRecordUpdated = medicalRecordOptional.get();</span>
+<span class="nc" id="L23">            medicalRecordUpdated.setBirthDate(medicalRecord.getBirthDate());</span>
+<span class="nc" id="L24">            medicalRecordUpdated.setMedications(medicalRecord.getMedications());</span>
+<span class="nc" id="L25">            medicalRecordUpdated.setAllergies(medicalRecord.getAllergies());</span>
+<span class="nc" id="L26">            medicalRecordRepository.save(medicalRecordUpdated);</span>
+        } else {
+<span class="nc" id="L28">            return new MedicalRecord();</span>
+        }
+<span class="nc" id="L30">        return medicalRecordUpdated;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

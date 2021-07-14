@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JsonReadService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">emergency-system</a> &gt; <a href="index.source.html" class="el_package">com.safetynet.emergencysystem.service</a> &gt; <span class="el_source">JsonReadService.java</span></div><h1>JsonReadService.java</h1><pre class="source lang-java linenums">package com.safetynet.emergencysystem.service;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RestController;
+
+@Service
+<span class="fc" id="L11">public class JsonReadService {</span>
+
+    @Autowired
+    static PersonReadService personReadService;
+
+    @Autowired
+    static FireStationReadService fireStationReadService;
+
+    @Autowired
+    static MedicalRecordReadService medicalRecordReadService;
+
+    private static ObjectMapper getDefaultObjectMapper() {
+<span class="fc" id="L23">        ObjectMapper defaultObjectMapper = new ObjectMapper();</span>
+<span class="fc" id="L24">        defaultObjectMapper.configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, false);</span>
+<span class="fc" id="L25">        defaultObjectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);</span>
+
+<span class="fc" id="L27">        return defaultObjectMapper;</span>
+    }
+
+<span class="fc" id="L30">    public static ObjectMapper objectMapper = getDefaultObjectMapper();</span>
+
+    public static &lt;classTargeted&gt; classTargeted read(JsonNode jsonNode, Class&lt;classTargeted&gt; classTargeted)
+            throws JsonProcessingException {
+
+<span class="fc" id="L35">        return objectMapper.treeToValue(jsonNode, classTargeted);</span>
+    }
+
+    public static String stringify(JsonNode jsonNode, boolean indented) throws JsonProcessingException {
+
+<span class="nc" id="L40">        ObjectWriter objectWriter = objectMapper.writer();</span>
+
+<span class="nc bnc" id="L42" title="All 2 branches missed.">        if (indented) {</span>
+<span class="nc" id="L43">            objectWriter = objectWriter.with(SerializationFeature.INDENT_OUTPUT);</span>
+        }
+
+<span class="nc" id="L46">        return objectWriter.writeValueAsString(jsonNode);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

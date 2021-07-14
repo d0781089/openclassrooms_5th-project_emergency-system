@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MedicalRecordReadService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">emergency-system</a> &gt; <a href="index.source.html" class="el_package">com.safetynet.emergencysystem.service</a> &gt; <span class="el_source">MedicalRecordReadService.java</span></div><h1>MedicalRecordReadService.java</h1><pre class="source lang-java linenums">package com.safetynet.emergencysystem.service;
+
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import com.safetynet.emergencysystem.dao.MedicalRecordRepository;
+import com.safetynet.emergencysystem.model.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.converter.json.MappingJacksonValue;
+import org.springframework.stereotype.Service;
+
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.Period;
+import java.util.*;
+import java.util.stream.Collectors;
+
+@Service
+<span class="fc" id="L21">public class MedicalRecordReadService {</span>
+
+    @Autowired
+    private PersonReadService personReadService;
+
+    @Autowired
+    private FireStationReadService fireStationReadService;
+
+    @Autowired
+    private MedicalRecordRepository medicalRecordRepository;
+
+<span class="fc" id="L32">    private static final Logger logger = LogManager.getLogger(MedicalRecordReadService.class);</span>
+
+    public List&lt;MedicalRecord&gt; getMedicalRecords() {
+
+<span class="fc" id="L36">        return medicalRecordRepository.findAll();</span>
+    }
+
+    public MedicalRecord getMedicalRecordById(Long id) {
+
+<span class="nc" id="L41">        return medicalRecordRepository.findById(id).get();</span>
+    }
+
+    public List&lt;MedicalRecord&gt; getByFirstNameAndLastName(List&lt;Person&gt; persons) {
+
+<span class="nc" id="L46">        List&lt;String&gt; firstNames = persons.stream()</span>
+<span class="nc" id="L47">                .map(Person::getFirstName)</span>
+<span class="nc" id="L48">                .collect(Collectors.toList());</span>
+
+<span class="nc" id="L50">        List&lt;String&gt; lastNames = persons.stream()</span>
+<span class="nc" id="L51">                .map(Person::getLastName)</span>
+<span class="nc" id="L52">                .collect(Collectors.toList());</span>
+
+<span class="nc" id="L54">        return medicalRecordRepository.getByFirstNameInAndLastNameIn(firstNames, lastNames);</span>
+    }
+
+    public Map&lt;String, Integer&gt; getCountOfChildrenAndAdults(List&lt;Person&gt; persons) {
+
+<span class="fc" id="L59">        logger.debug(&quot;[COVERED] Retrieve persons: &quot; + persons);</span>
+
+<span class="fc" id="L61">        Date minimumBirthDateRequired = Date.valueOf(LocalDate.now().minusYears(18));</span>
+<span class="fc" id="L62">        logger.debug(&quot;[COVERED] Get minimum birth date: &quot; + minimumBirthDateRequired);</span>
+
+<span class="fc" id="L64">        Map&lt;String, Integer&gt; countOfChildrenAndAdults = new HashMap&lt;String, Integer&gt;();</span>
+
+<span class="fc" id="L66">        List&lt;MedicalRecord&gt; children = medicalRecordRepository.getByBirthDateGreaterThan(minimumBirthDateRequired);</span>
+<span class="fc" id="L67">        logger.debug(&quot;[COVERED] Retrieve children medical records: &quot; + children);</span>
+
+<span class="fc" id="L69">        List&lt;MedicalRecord&gt; adults = medicalRecordRepository.getByBirthDateLessThanEqual(minimumBirthDateRequired);</span>
+<span class="fc" id="L70">        logger.debug(&quot;[COVERED] Retrieve adults medical records: &quot; + adults);</span>
+
+<span class="fc" id="L72">        Set&lt;String&gt; firstNames = persons.stream()</span>
+<span class="fc" id="L73">                .map(Person::getFirstName)</span>
+<span class="fc" id="L74">                .collect(Collectors.toSet());</span>
+
+<span class="fc" id="L76">        Set&lt;String&gt; lastNames = persons.stream()</span>
+<span class="fc" id="L77">                .map(Person::getLastName)</span>
+<span class="fc" id="L78">                .collect(Collectors.toSet());</span>
+
+<span class="fc" id="L80">        List&lt;MedicalRecord&gt; childrenByFirstNameAndLastName =</span>
+<span class="pc" id="L81">                children.stream().filter(medicalRecord -&gt; firstNames.contains(medicalRecord.getFirstName()))</span>
+<span class="pc" id="L82">                        .filter(s -&gt; lastNames.contains(s.getLastName()))</span>
+<span class="fc" id="L83">                        .collect(Collectors.toList());</span>
+<span class="fc" id="L84">        logger.debug(&quot;[COVERED] Get children by first and last name: &quot; + childrenByFirstNameAndLastName);</span>
+
+<span class="fc" id="L86">        List&lt;MedicalRecord&gt; adultsByFirstNameAndLastName =</span>
+<span class="pc" id="L87">                adults.stream().filter(medicalRecord -&gt; firstNames.contains(medicalRecord.getFirstName()))</span>
+<span class="pc" id="L88">                        .filter(s -&gt; lastNames.contains(s.getLastName()))</span>
+<span class="fc" id="L89">                        .collect(Collectors.toList());</span>
+<span class="fc" id="L90">        logger.debug(&quot;[COVERED] Get children by first and last name: &quot; + adultsByFirstNameAndLastName);</span>
+
+<span class="fc" id="L92">        countOfChildrenAndAdults.put(&quot;children&quot;, childrenByFirstNameAndLastName.size());</span>
+<span class="fc" id="L93">        countOfChildrenAndAdults.put(&quot;adults&quot;, adultsByFirstNameAndLastName.size());</span>
+
+<span class="fc" id="L95">        return countOfChildrenAndAdults;</span>
+    }
+
+    public MappingJacksonValue getChildrenByAddress(String address) {
+
+<span class="fc" id="L100">        Date minimumBirthDate = Date.valueOf(LocalDate.now().minusYears(18));</span>
+
+<span class="fc" id="L102">        List&lt;Person&gt; persons = personReadService.getPersonsByAddress(address);</span>
+<span class="fc" id="L103">        logger.debug(&quot;[CHILDALERT] Retrieve persons: &quot; + persons);</span>
+
+<span class="fc" id="L105">        List&lt;MedicalRecord&gt; childrenMedicalRecords = medicalRecordRepository.getByBirthDateGreaterThan(minimumBirthDate);</span>
+<span class="fc" id="L106">        logger.debug(&quot;[CHILDALERT] Retrieve children medical records: &quot; + childrenMedicalRecords);</span>
+
+<span class="fc" id="L108">        List&lt;MedicalRecord&gt; adultsMedicalRecords= medicalRecordRepository.getByBirthDateLessThanEqual(minimumBirthDate);</span>
+<span class="fc" id="L109">        logger.debug(&quot;[CHILDALERT] Retrieve adults medical records: &quot; + adultsMedicalRecords);</span>
+
+<span class="fc" id="L111">        Set&lt;String&gt; firstNames = persons.stream()</span>
+<span class="fc" id="L112">                .map(Person::getFirstName)</span>
+<span class="fc" id="L113">                .collect(Collectors.toSet());</span>
+
+<span class="fc" id="L115">        Set&lt;String&gt; lastNames = persons.stream()</span>
+<span class="fc" id="L116">                .map(Person::getLastName)</span>
+<span class="fc" id="L117">                .collect(Collectors.toSet());</span>
+
+<span class="fc" id="L119">        List&lt;MedicalRecord&gt; childrenByFirstNameAndLastName =</span>
+<span class="pc bnc" id="L120" title="All 2 branches missed.">                childrenMedicalRecords.stream().filter(medicalRecord -&gt; firstNames.contains(medicalRecord.getFirstName())</span>
+<span class="nc bnc" id="L121" title="All 2 branches missed.">                        &amp;&amp; lastNames.contains(medicalRecord.getLastName()))</span>
+<span class="fc" id="L122">                        .collect(Collectors.toList());</span>
+<span class="fc" id="L123">        logger.debug(&quot;[CHILD-ALERT] Get children medical records by first and last name: &quot; + childrenByFirstNameAndLastName);</span>
+
+<span class="fc" id="L125">        List&lt;MedicalRecord&gt; adultsByFirstNameAndLastName =</span>
+<span class="pc bnc" id="L126" title="All 2 branches missed.">                adultsMedicalRecords.stream().filter(medicalRecord -&gt; firstNames.contains(medicalRecord.getFirstName())</span>
+<span class="nc bnc" id="L127" title="All 2 branches missed.">                        &amp;&amp; lastNames.contains(medicalRecord.getLastName()))</span>
+<span class="fc" id="L128">                        .collect(Collectors.toList());</span>
+<span class="fc" id="L129">        logger.debug(&quot;[CHILDALERT] Get adults medical records by first and last name: &quot; + adultsByFirstNameAndLastName);</span>
+
+<span class="fc" id="L131">        List&lt;PersonWithAge&gt; children = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L132">        List&lt;PersonWithAge&gt; adults = new ArrayList&lt;&gt;();</span>
+
+<span class="pc bpc" id="L134" title="1 of 2 branches missed.">        for(MedicalRecord m : childrenByFirstNameAndLastName) {</span>
+<span class="nc" id="L135">            PersonWithAge child = new PersonWithAge();</span>
+
+<span class="nc" id="L137">            child.setFirstName(m.getFirstName());</span>
+<span class="nc" id="L138">            child.setLastName(m.getLastName());</span>
+<span class="nc" id="L139">            child.setAge(Period.between(m.getBirthDate().toLocalDate(), LocalDate.now()).getYears());</span>
+
+<span class="nc" id="L141">            logger.debug(&quot;[CHILDALERT] Add child: &quot; + child);</span>
+<span class="nc" id="L142">            children.add(child);</span>
+<span class="nc" id="L143">        }</span>
+
+<span class="fc" id="L145">        logger.debug(&quot;[CHILDALERT] Get children: &quot; + children);</span>
+
+<span class="pc bpc" id="L147" title="1 of 2 branches missed.">        for(MedicalRecord m : adultsByFirstNameAndLastName) {</span>
+<span class="nc" id="L148">            PersonWithAge adult = new PersonWithAge();</span>
+
+<span class="nc" id="L150">            adult.setFirstName(m.getFirstName());</span>
+<span class="nc" id="L151">            adult.setLastName(m.getLastName());</span>
+<span class="nc" id="L152">            adult.setAge(Period.between(m.getBirthDate().toLocalDate(), LocalDate.now()).getYears());</span>
+
+<span class="nc" id="L154">            logger.debug(&quot;[CHILD-ALERT] Add adult: &quot; + adult);</span>
+<span class="nc" id="L155">            adults.add(adult);</span>
+<span class="nc" id="L156">        }</span>
+
+<span class="fc" id="L158">        ResultChildAlert resultChildAlert = new ResultChildAlert();</span>
+<span class="fc" id="L159">        resultChildAlert.setChildren(children);</span>
+<span class="fc" id="L160">        resultChildAlert.setAdults(adults);</span>
+
+<span class="fc" id="L162">        SimpleBeanPropertyFilter personFilter = SimpleBeanPropertyFilter.filterOutAllExcept(</span>
+                &quot;firstName&quot;, &quot;lastName&quot;, &quot;age&quot;);
+<span class="fc" id="L164">        FilterProvider filters = new SimpleFilterProvider().addFilter(&quot;personWithAgeFilter&quot;, personFilter);</span>
+<span class="fc" id="L165">        MappingJacksonValue result = new MappingJacksonValue(resultChildAlert);</span>
+<span class="fc" id="L166">        result.setFilters(filters);</span>
+
+<span class="fc" id="L168">        return result;</span>
+    }
+
+    public MappingJacksonValue getPersonsByAddress(String address) {
+
+<span class="fc" id="L173">        int station = 0;</span>
+<span class="fc" id="L174">        Optional&lt;FireStation&gt; optionalFireStation = Optional.ofNullable(fireStationReadService.findFireStationByAddress(address));</span>
+<span class="pc bpc" id="L175" title="1 of 2 branches missed.">        if(optionalFireStation.isPresent()) {</span>
+<span class="nc" id="L176">            station = optionalFireStation.get().getStation();</span>
+        }
+
+<span class="fc" id="L179">        List&lt;Person&gt; personsByAddress = personReadService.getPersonsByAddress(address);</span>
+<span class="fc" id="L180">        List&lt;MedicalRecord&gt; medicalRecords = medicalRecordRepository.findAll();</span>
+
+<span class="fc" id="L182">        Set&lt;String&gt; firstNames = personsByAddress.stream()</span>
+<span class="fc" id="L183">                .map(Person::getFirstName)</span>
+<span class="fc" id="L184">                .collect(Collectors.toSet());</span>
+
+<span class="fc" id="L186">        Set&lt;String&gt; lastNames = personsByAddress.stream()</span>
+<span class="fc" id="L187">                .map(Person::getLastName)</span>
+<span class="fc" id="L188">                .collect(Collectors.toSet());</span>
+
+<span class="fc" id="L190">        List&lt;MedicalRecord&gt; medicalRecordsByFirstNameAndLastName = medicalRecords.stream()</span>
+<span class="pc bnc" id="L191" title="All 2 branches missed.">                .filter(medicalRecord -&gt; firstNames.contains(medicalRecord.getFirstName())</span>
+<span class="nc bnc" id="L192" title="All 2 branches missed.">                &amp;&amp; lastNames.contains(medicalRecord.getLastName()))</span>
+<span class="fc" id="L193">                .collect(Collectors.toList());</span>
+
+<span class="fc" id="L195">        List&lt;PersonWithMedicalRecords&gt; persons = new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L197">        medicalRecordsByFirstNameAndLastName.forEach(medicalRecord -&gt; {</span>
+<span class="nc" id="L198">            PersonWithMedicalRecords person = new PersonWithMedicalRecords();</span>
+
+<span class="nc" id="L200">            person.setFirstName(medicalRecord.getFirstName());</span>
+<span class="nc" id="L201">            person.setLastName(medicalRecord.getLastName());</span>
+<span class="nc" id="L202">            person.setPhone(personsByAddress.stream()</span>
+<span class="nc" id="L203">                    .filter(p -&gt; medicalRecord.getFirstName().equals(p.getFirstName()))</span>
+<span class="nc" id="L204">                    .filter(p -&gt; medicalRecord.getLastName().equals(p.getLastName()))</span>
+<span class="nc" id="L205">                    .map(Person::getPhone)</span>
+<span class="nc" id="L206">                    .collect(Collectors.joining()));</span>
+<span class="nc" id="L207">            person.setAge(Period.between(medicalRecord.getBirthDate().toLocalDate()</span>
+<span class="nc" id="L208">                    , LocalDate.now()).getYears());</span>
+<span class="nc" id="L209">            person.setMedications(medicalRecord.getMedications());</span>
+<span class="nc" id="L210">            person.setAllergies(medicalRecord.getAllergies());</span>
+<span class="nc" id="L211">            persons.add(person);</span>
+<span class="nc" id="L212">        });</span>
+
+<span class="fc" id="L214">        ResultFireAlert resultFireAlert = new ResultFireAlert();</span>
+<span class="fc" id="L215">        resultFireAlert.setStation(station);</span>
+<span class="fc" id="L216">        resultFireAlert.setPersons(persons);</span>
+
+<span class="fc" id="L218">        SimpleBeanPropertyFilter personFilter = SimpleBeanPropertyFilter.filterOutAllExcept(</span>
+                &quot;firstName&quot;, &quot;lastName&quot;, &quot;phone&quot;, &quot;age&quot;, &quot;medications&quot;, &quot;allergies&quot;);
+<span class="fc" id="L220">        FilterProvider filterList = new SimpleFilterProvider().addFilter(&quot;personWithMedicalRecordsFilter&quot;, personFilter);</span>
+<span class="fc" id="L221">        MappingJacksonValue result = new MappingJacksonValue(resultFireAlert);</span>
+<span class="fc" id="L222">        result.setFilters(filterList);</span>
+
+<span class="fc" id="L224">        return result;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

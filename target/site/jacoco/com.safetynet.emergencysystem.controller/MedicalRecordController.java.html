@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MedicalRecordController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">emergency-system</a> &gt; <a href="index.source.html" class="el_package">com.safetynet.emergencysystem.controller</a> &gt; <span class="el_source">MedicalRecordController.java</span></div><h1>MedicalRecordController.java</h1><pre class="source lang-java linenums">package com.safetynet.emergencysystem.controller;
+
+import com.safetynet.emergencysystem.model.MedicalRecord;
+import com.safetynet.emergencysystem.service.MedicalRecordCreationService;
+import com.safetynet.emergencysystem.service.MedicalRecordDeletionService;
+import com.safetynet.emergencysystem.service.MedicalRecordReadService;
+import com.safetynet.emergencysystem.service.MedicalRecordUpdateService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.converter.json.MappingJacksonValue;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+<span class="fc" id="L15">public class MedicalRecordController {</span>
+
+    @Autowired
+    private MedicalRecordCreationService medicalRecordCreationService;
+    @Autowired
+    private MedicalRecordReadService medicalRecordReadService;
+    @Autowired
+    private MedicalRecordUpdateService medicalRecordUpdateService;
+    @Autowired
+    private MedicalRecordDeletionService medicalRecordDeletionService;
+
+    @GetMapping(&quot;/medicalRecords&quot;)
+    public List&lt;MedicalRecord&gt; getMedicalRecords() {
+
+<span class="fc" id="L29">        return medicalRecordReadService.getMedicalRecords();</span>
+    }
+
+    @GetMapping(&quot;/medicalRecords/{id}&quot;)
+    public MedicalRecord getMedicalRecordById(@PathVariable Long id) {
+
+<span class="fc" id="L35">        return medicalRecordReadService.getMedicalRecordById(id);</span>
+    }
+
+    @PostMapping(&quot;/createMedicalRecord&quot;)
+    public MedicalRecord createMedicalRecord(@RequestBody MedicalRecord medicalRecord) {
+
+<span class="nc" id="L41">        return medicalRecordCreationService.createMedicalRecord(medicalRecord);</span>
+    }
+
+    @PostMapping(&quot;/createMedicalRecords&quot;)
+    public List&lt;MedicalRecord&gt; createMedicalRecord(@RequestBody List&lt;MedicalRecord&gt; medicalRecords) {
+
+<span class="nc" id="L47">        return medicalRecordCreationService.createMedicalRecords(medicalRecords);</span>
+    }
+
+    @PutMapping(&quot;/updateMedicalRecord&quot;)
+    public MedicalRecord updateMedicalRecord(@RequestBody MedicalRecord medicalRecord) {
+
+<span class="nc" id="L53">        return medicalRecordUpdateService.updateMedicalRecord(medicalRecord);</span>
+    }
+
+    @DeleteMapping(&quot;/medicalRecords/{id}&quot;)
+    public void deleteMedicalRecordById(@PathVariable Long id) {
+
+<span class="fc" id="L59">        medicalRecordDeletionService.deleteMedicalRecord(id);</span>
+<span class="fc" id="L60">    }</span>
+
+    @GetMapping(&quot;/childAlert&quot;)
+    public MappingJacksonValue getChildrenByAddress(@RequestParam String address) {
+
+<span class="fc" id="L65">        return medicalRecordReadService.getChildrenByAddress(address);</span>
+    }
+
+    @GetMapping(&quot;/fire&quot;)
+    public MappingJacksonValue getPersonsByAddress(@RequestParam String address) {
+
+<span class="fc" id="L71">        return medicalRecordReadService.getPersonsByAddress(address);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FireStationReadService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">emergency-system</a> &gt; <a href="index.source.html" class="el_package">com.safetynet.emergencysystem.service</a> &gt; <span class="el_source">FireStationReadService.java</span></div><h1>FireStationReadService.java</h1><pre class="source lang-java linenums">package com.safetynet.emergencysystem.service;
+
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import com.safetynet.emergencysystem.dao.FireStationRepository;
+import com.safetynet.emergencysystem.model.FireStation;
+import com.safetynet.emergencysystem.model.Person;
+import com.safetynet.emergencysystem.model.PersonWithAge;
+import com.safetynet.emergencysystem.model.ResultByFireStation;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.converter.json.MappingJacksonValue;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+@Service
+<span class="fc" id="L21">public class FireStationReadService {</span>
+
+    @Autowired
+    private PersonReadService personReadService;
+
+    @Autowired
+    private FireStationRepository fireStationRepository;
+
+    @Autowired
+    private MedicalRecordReadService medicalRecordReadService;
+
+<span class="fc" id="L32">    private static final Logger logger = LogManager.getLogger(FireStationReadService.class);</span>
+
+    public List&lt;FireStation&gt; getFireStations() {
+
+<span class="fc" id="L36">        return fireStationRepository.findAll();</span>
+    }
+
+    public FireStation getFireStationById(Long id) {
+
+<span class="fc" id="L41">        return fireStationRepository.findById(id).get();</span>
+    }
+
+    public FireStation getFireStationByAddress(String address) {
+
+<span class="nc" id="L46">        return fireStationRepository.getByAddress(address);</span>
+    }
+
+    public FireStation findFireStationByAddress(String address) {
+
+<span class="fc" id="L51">        return fireStationRepository.findByAddress(address);</span>
+    }
+
+    public List&lt;FireStation&gt; getFireStationByStation(int station) {
+
+<span class="nc" id="L56">        return fireStationRepository.getByStation(station);</span>
+    }
+
+    public MappingJacksonValue getPersonsByFireStation(int station) {
+
+<span class="fc" id="L61">        logger.debug(&quot;[COVERED] Get station: &quot; + station);</span>
+
+<span class="fc" id="L63">        List&lt;FireStation&gt; fireStations = fireStationRepository.getByStation(station);</span>
+
+<span class="fc" id="L65">        Set&lt;String&gt; addressesByStation = fireStations.stream()</span>
+<span class="fc" id="L66">                .map(FireStation::getAddress)</span>
+<span class="fc" id="L67">                .collect(Collectors.toSet());</span>
+
+<span class="fc" id="L69">        List&lt;Person&gt; personsByAddress = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L70">        List&lt;PersonWithAge&gt; persons = new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L72">        addressesByStation.forEach(address -&gt; {</span>
+<span class="nc" id="L73">            personsByAddress.addAll(personReadService.getPersonsByAddress(address));</span>
+
+<span class="nc" id="L75">            personsByAddress.forEach(personByAddress -&gt; {</span>
+<span class="nc" id="L76">                PersonWithAge person = new PersonWithAge();</span>
+
+<span class="nc" id="L78">                person.setFirstName(personByAddress.getFirstName());</span>
+<span class="nc" id="L79">                person.setLastName(personByAddress.getLastName());</span>
+<span class="nc" id="L80">                person.setAddress(personByAddress.getAddress());</span>
+<span class="nc" id="L81">                person.setPhone(personByAddress.getPhone());</span>
+
+<span class="nc" id="L83">                persons.add(person);</span>
+<span class="nc" id="L84">            });</span>
+<span class="nc" id="L85">        });</span>
+
+<span class="fc" id="L87">        Map&lt;String, Integer&gt; countOfChildrenAndAdults = new TreeMap&lt;&gt;();</span>
+<span class="fc" id="L88">        countOfChildrenAndAdults.putAll(medicalRecordReadService.getCountOfChildrenAndAdults(personsByAddress));</span>
+<span class="fc" id="L89">        logger.debug(&quot;[COVERED] Count children and adults: &quot; + countOfChildrenAndAdults);</span>
+
+<span class="fc" id="L91">        ResultByFireStation resultByFireStation = new ResultByFireStation();</span>
+<span class="fc" id="L92">        resultByFireStation.setChildrenCount(countOfChildrenAndAdults.get(&quot;children&quot;));</span>
+<span class="fc" id="L93">        resultByFireStation.setAdultsCount(countOfChildrenAndAdults.get(&quot;adults&quot;));</span>
+<span class="fc" id="L94">        resultByFireStation.setPersons(persons);</span>
+
+<span class="fc" id="L96">        SimpleBeanPropertyFilter personFilter = SimpleBeanPropertyFilter.filterOutAllExcept(</span>
+                &quot;firstName&quot;, &quot;lastName&quot;, &quot;address&quot;, &quot;phone&quot;);
+<span class="fc" id="L98">        FilterProvider filters = new SimpleFilterProvider().addFilter(&quot;personWithAgeFilter&quot;, personFilter);</span>
+<span class="fc" id="L99">        MappingJacksonValue result = new MappingJacksonValue(resultByFireStation);</span>
+<span class="fc" id="L100">        result.setFilters(filters);</span>
+
+<span class="fc" id="L102">        return result;</span>
+    }
+
+    public List&lt;String&gt; getPhonesByFireStation(int station) {
+
+<span class="nc" id="L107">        List&lt;FireStation&gt; fireStations = fireStationRepository.getByStation(station);</span>
+<span class="nc" id="L108">        List&lt;Person&gt; persons = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L109">        List&lt;String&gt; phones = new ArrayList&lt;&gt;();</span>
+
+<span class="nc" id="L111">        Set&lt;String&gt; addressesByFireStation = fireStations.stream()</span>
+<span class="nc" id="L112">                .map(FireStation::getAddress)</span>
+<span class="nc" id="L113">                .collect(Collectors.toSet());</span>
+
+<span class="nc" id="L115">        addressesByFireStation.forEach(address -&gt; {</span>
+<span class="nc" id="L116">            persons.addAll(personReadService.getPersonsByAddress(address));</span>
+<span class="nc" id="L117">            phones.addAll(persons.stream()</span>
+<span class="nc" id="L118">                    .map(person -&gt; person.getPhone())</span>
+<span class="nc" id="L119">                    .collect(Collectors.toList()));</span>
+
+<span class="nc" id="L121">            logger.debug(&quot;[PHONEALERT] Retrieve phones: &quot; + phones);</span>
+<span class="nc" id="L122">        });</span>
+
+<span class="nc" id="L124">        return phones;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
