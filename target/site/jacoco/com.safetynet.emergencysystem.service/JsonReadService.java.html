@@ -37,13 +37,13 @@ import org.springframework.web.bind.annotation.RestController;
 
     public static String stringify(JsonNode jsonNode, boolean indented) throws JsonProcessingException {
 
-<span class="nc" id="L40">        ObjectWriter objectWriter = objectMapper.writer();</span>
+<span class="fc" id="L40">        ObjectWriter objectWriter = objectMapper.writer();</span>
 
-<span class="nc bnc" id="L42" title="All 2 branches missed.">        if (indented) {</span>
+<span class="pc bpc" id="L42" title="1 of 2 branches missed.">        if (indented) {</span>
 <span class="nc" id="L43">            objectWriter = objectWriter.with(SerializationFeature.INDENT_OUTPUT);</span>
         }
 
-<span class="nc" id="L46">        return objectWriter.writeValueAsString(jsonNode);</span>
+<span class="fc" id="L46">        return objectWriter.writeValueAsString(jsonNode);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

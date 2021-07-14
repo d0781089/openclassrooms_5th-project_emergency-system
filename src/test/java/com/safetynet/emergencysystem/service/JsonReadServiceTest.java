@@ -2,16 +2,19 @@ package com.safetynet.emergencysystem.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.safetynet.emergencysystem.model.JsonData;
 import com.safetynet.emergencysystem.model.Person;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@SpringBootTest
 class JsonReadServiceTest {
 
     private JsonReadService jsonReadService;
@@ -25,9 +28,8 @@ class JsonReadServiceTest {
             "\"phone\":\"+44 20 7234 3456\"," +
             "\"email\":\"hpotter@mail.co.uk\"}";
 
-    /*
     @Test
-    void shouldParseJson() throws JsonProcessingException {
+    void shouldParseJson() throws IOException {
 
         JsonNode jsonNode = jsonParseService.parse(testJsonString);
 
@@ -35,7 +37,7 @@ class JsonReadServiceTest {
     }
 
     @Test
-    void shouldStoreJsonInModel() throws JsonProcessingException {
+    void shouldStoreJsonInModel() throws IOException {
 
         JsonNode jsonNode = jsonParseService.parse(testJsonString);
         Person person = jsonReadService.read(jsonNode, Person.class);
@@ -78,17 +80,4 @@ class JsonReadServiceTest {
 
         assertEquals(jsonReadService.stringify(jsonNode, false), testJsonString);
     }
-
-    @Test
-    void shouldReadFromJsonFile() throws IOException {
-
-        String file = "src/main/resources/data.json";
-        String json = new String(Files.readAllBytes(Paths.get(file)));
-        JsonNode jsonNode = jsonParseService.parse(json);
-
-        JsonData jsonData = jsonReadService.read(jsonNode, JsonData.class);
-
-        assertEquals(jsonData.getPersons().get(0).getFirstName(), "John");
-    }
-    */
 }

@@ -1,16 +1,15 @@
 package com.safetynet.emergencysystem.controller;
 
 import com.safetynet.emergencysystem.model.FireStation;
-import com.safetynet.emergencysystem.service.FireStationCreationService;
-import com.safetynet.emergencysystem.service.FireStationDeletionService;
-import com.safetynet.emergencysystem.service.FireStationReadService;
-import com.safetynet.emergencysystem.service.FireStationUpdateService;
+import com.safetynet.emergencysystem.service.firestation.FireStationCreationService;
+import com.safetynet.emergencysystem.service.firestation.FireStationDeletionService;
+import com.safetynet.emergencysystem.service.firestation.FireStationReadService;
+import com.safetynet.emergencysystem.service.firestation.FireStationUpdateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 public class FireStationController {

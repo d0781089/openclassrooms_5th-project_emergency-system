@@ -1,10 +1,10 @@
 package com.safetynet.emergencysystem.controller;
 
 import com.safetynet.emergencysystem.model.MedicalRecord;
-import com.safetynet.emergencysystem.service.MedicalRecordCreationService;
-import com.safetynet.emergencysystem.service.MedicalRecordDeletionService;
-import com.safetynet.emergencysystem.service.MedicalRecordReadService;
-import com.safetynet.emergencysystem.service.MedicalRecordUpdateService;
+import com.safetynet.emergencysystem.service.medicalrecord.MedicalRecordCreationService;
+import com.safetynet.emergencysystem.service.medicalrecord.MedicalRecordDeletionService;
+import com.safetynet.emergencysystem.service.medicalrecord.MedicalRecordReadService;
+import com.safetynet.emergencysystem.service.medicalrecord.MedicalRecordUpdateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;

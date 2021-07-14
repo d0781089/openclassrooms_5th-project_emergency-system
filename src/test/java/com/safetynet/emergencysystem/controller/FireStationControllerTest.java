@@ -2,10 +2,10 @@ package com.safetynet.emergencysystem.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.safetynet.emergencysystem.model.FireStation;
-import com.safetynet.emergencysystem.service.FireStationCreationService;
-import com.safetynet.emergencysystem.service.FireStationDeletionService;
-import com.safetynet.emergencysystem.service.FireStationReadService;
-import com.safetynet.emergencysystem.service.FireStationUpdateService;
+import com.safetynet.emergencysystem.service.firestation.FireStationCreationService;
+import com.safetynet.emergencysystem.service.firestation.FireStationDeletionService;
+import com.safetynet.emergencysystem.service.firestation.FireStationReadService;
+import com.safetynet.emergencysystem.service.firestation.FireStationUpdateService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -2,11 +2,11 @@ package com.safetynet.emergencysystem.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.safetynet.emergencysystem.model.MedicalRecord;
-import com.safetynet.emergencysystem.model.ResultChildAlert;
-import com.safetynet.emergencysystem.service.MedicalRecordCreationService;
-import com.safetynet.emergencysystem.service.MedicalRecordDeletionService;
-import com.safetynet.emergencysystem.service.MedicalRecordReadService;
-import com.safetynet.emergencysystem.service.MedicalRecordUpdateService;
+import com.safetynet.emergencysystem.model.result.ResultChildAlert;
+import com.safetynet.emergencysystem.service.medicalrecord.MedicalRecordCreationService;
+import com.safetynet.emergencysystem.service.medicalrecord.MedicalRecordDeletionService;
+import com.safetynet.emergencysystem.service.medicalrecord.MedicalRecordReadService;
+import com.safetynet.emergencysystem.service.medicalrecord.MedicalRecordUpdateService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
