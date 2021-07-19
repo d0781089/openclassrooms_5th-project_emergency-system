@@ -35,25 +35,35 @@ public class FireStationReadService {
 
     public List<FireStation> getFireStations() {
 
+        logger.debug("FireStations: " + fireStationRepository.findAll());
+
         return fireStationRepository.findAll();
     }
 
     public FireStation getFireStationById(Long id) {
+
+        logger.debug("FireStationById: " + fireStationRepository.findAll());
 
         return fireStationRepository.findById(id).get();
     }
 
     public FireStation getFireStationByAddress(String address) {
 
+        logger.debug("FireStationByAddress: " + fireStationRepository.findAll());
+
         return fireStationRepository.getByAddress(address);
     }
 
     public FireStation findFireStationByAddress(String address) {
 
+        logger.debug("FireStationFoundByAddress: " + fireStationRepository.findByAddress(address));
+
         return fireStationRepository.findByAddress(address);
     }
 
     public List<FireStation> getFireStationByStation(int station) {
+
+        logger.debug("FireStationByStation: " + fireStationRepository.getByStation(station));
 
         return fireStationRepository.getByStation(station);
     }

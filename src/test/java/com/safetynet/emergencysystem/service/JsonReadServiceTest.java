@@ -28,6 +28,16 @@ class JsonReadServiceTest {
             "\"phone\":\"+44 20 7234 3456\"," +
             "\"email\":\"hpotter@mail.co.uk\"}";
 
+    private String testJsonIndentedString = "{\r\n"
+            + "  \"firstName\" : \"Harry\",\r\n"
+                        + "  \"lastName\" : \"POTTER\",\r\n"
+                        + "  \"address\" : \"4, Privet Drive\",\r\n"
+                        + "  \"city\" : \"Little Whinging\",\r\n"
+                        + "  \"zip\" : \"21944\",\r\n"
+                        + "  \"phone\" : \"+44 20 7234 3456\",\r\n"
+                        + "  \"email\" : \"hpotter@mail.co.uk\"\r\n"
+            + "}";
+
     @Test
     void shouldParseJson() throws IOException {
 
@@ -79,5 +89,25 @@ class JsonReadServiceTest {
         JsonNode jsonNode = jsonParseService.toJson(person);
 
         assertEquals(jsonReadService.stringify(jsonNode, false), testJsonString);
+    }
+
+    @Test
+    void shouldStringifyWithIndentation() throws JsonProcessingException {
+
+        Person person = new Person();
+
+        person.setFirstName("Harry");
+        person.setLastName("POTTER");
+        person.setAddress("4, Privet Drive");
+        person.setCity("Little Whinging");
+        person.setZip("21944");
+        person.setPhone("+44 20 7234 3456");
+        person.setEmail("hpotter@mail.co.uk");
+
+        JsonNode jsonNode = jsonParseService.toJson(person);
+
+        String expected = jsonReadService.stringify(jsonNode, true);
+
+        assertEquals(expected, testJsonIndentedString);
     }
 }
