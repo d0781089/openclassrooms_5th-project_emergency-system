@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FireStationController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">emergency-system</a> &gt; <a href="index.source.html" class="el_package">com.safetynet.emergencysystem.controller</a> &gt; <span class="el_source">FireStationController.java</span></div><h1>FireStationController.java</h1><pre class="source lang-java linenums">package com.safetynet.emergencysystem.controller;
 
 import com.safetynet.emergencysystem.model.FireStation;
-import com.safetynet.emergencysystem.service.FireStationCreationService;
-import com.safetynet.emergencysystem.service.FireStationDeletionService;
-import com.safetynet.emergencysystem.service.FireStationReadService;
-import com.safetynet.emergencysystem.service.FireStationUpdateService;
+import com.safetynet.emergencysystem.service.firestation.FireStationCreationService;
+import com.safetynet.emergencysystem.service.firestation.FireStationDeletionService;
+import com.safetynet.emergencysystem.service.firestation.FireStationReadService;
+import com.safetynet.emergencysystem.service.firestation.FireStationUpdateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
-<span class="fc" id="L16">public class FireStationController {</span>
+<span class="fc" id="L15">public class FireStationController {</span>
 
     @Autowired
     private FireStationCreationService fireStationCreationService;
@@ -27,49 +26,49 @@ import java.util.Map;
     @GetMapping(&quot;/fireStations&quot;)
     public List&lt;FireStation&gt; getFireStations() {
 
-<span class="fc" id="L30">        return fireStationReadService.getFireStations();</span>
+<span class="fc" id="L29">        return fireStationReadService.getFireStations();</span>
     }
 
     @GetMapping(&quot;/fireStations/{id}&quot;)
     public FireStation getFireStationById(@PathVariable Long id) {
 
-<span class="fc" id="L36">        return fireStationReadService.getFireStationById(id);</span>
+<span class="fc" id="L35">        return fireStationReadService.getFireStationById(id);</span>
     }
 
     @PostMapping(&quot;/createFireStation&quot;)
     public FireStation createFireStation(@RequestBody FireStation fireStation) {
 
-<span class="fc" id="L42">        return fireStationCreationService.createFireStation(fireStation);</span>
+<span class="fc" id="L41">        return fireStationCreationService.createFireStation(fireStation);</span>
     }
 
     @PostMapping(&quot;/createFireStations&quot;)
     public List&lt;FireStation&gt; createFireStation(@RequestBody List&lt;FireStation&gt; fireStations) {
 
-<span class="fc" id="L48">        return fireStationCreationService.createFireStations(fireStations);</span>
+<span class="fc" id="L47">        return fireStationCreationService.createFireStations(fireStations);</span>
     }
 
     @PutMapping(&quot;/updateFireStation&quot;)
     public FireStation updateFireStation(@RequestBody FireStation fireStation) {
 
-<span class="fc" id="L54">        return fireStationUpdateService.updateFireStation(fireStation);</span>
+<span class="fc" id="L53">        return fireStationUpdateService.updateFireStation(fireStation);</span>
     }
 
     @DeleteMapping(&quot;/fireStations/{id}&quot;)
     public void deleteFireStationById(@PathVariable Long id) {
 
-<span class="fc" id="L60">        fireStationDeletionService.deleteFireStation(id);</span>
-<span class="fc" id="L61">    }</span>
+<span class="fc" id="L59">        fireStationDeletionService.deleteFireStation(id);</span>
+<span class="fc" id="L60">    }</span>
 
     @GetMapping(&quot;/firestation&quot;)
     MappingJacksonValue getPersonsByFireStation(@RequestParam int stationNumber) {
 
-<span class="fc" id="L66">        return fireStationReadService.getPersonsByFireStation(stationNumber);</span>
+<span class="fc" id="L65">        return fireStationReadService.getPersonsByFireStation(stationNumber);</span>
     }
 
     @GetMapping(&quot;/phoneAlert&quot;)
     List&lt;String&gt; getPhonesByFireStation(@RequestParam int firestation) {
 
-<span class="nc" id="L72">        return fireStationReadService.getPhonesByFireStation(firestation);</span>
+<span class="nc" id="L71">        return fireStationReadService.getPhonesByFireStation(firestation);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

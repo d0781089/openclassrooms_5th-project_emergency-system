@@ -43,6 +43,12 @@ public class PersonServiceTest {
     }
 
     @Test
+    public void shouldGetPersonById() throws Exception {
+
+        mockMvc.perform(get("/persons/1")).andExpect(status().isOk());
+    }
+
+    @Test
     public void shouldGetPersonByFirstNameAndLastName() throws Exception {
 
         mockMvc.perform(get("/personInfo")
@@ -106,5 +112,11 @@ public class PersonServiceTest {
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(person)))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldDeletePerson() throws Exception {
+
+        mockMvc.perform(delete("/persons/1")).andExpect(status().isOk());
     }
 }

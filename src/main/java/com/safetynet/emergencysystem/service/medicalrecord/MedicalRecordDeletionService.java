@@ -12,6 +12,8 @@ public class MedicalRecordDeletionService {
 
     public void deleteMedicalRecord(Long id) {
 
-        medicalRecordRepository.deleteById(id);
+        if (medicalRecordRepository.existsById(id)) {
+            medicalRecordRepository.deleteById(id);
+        }
     }
 }

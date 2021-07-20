@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -30,6 +31,12 @@ public class MedicalRecordServiceTest {
     }
 
     @Test
+    public void shouldGetMedicalRecordById() throws Exception {
+
+        mockMvc.perform(get("/medicalRecords/1")).andExpect(status().isOk());
+    }
+
+    @Test
     public void shouldGetChildrenByAddress() throws Exception {
 
         mockMvc.perform(get("/childAlert").param("address", "1509 Culver St"))
@@ -41,5 +48,11 @@ public class MedicalRecordServiceTest {
 
         mockMvc.perform(get("/fire").param("address", "1509 Culver St"))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldDeleteFireStation() throws Exception {
+
+        mockMvc.perform(delete("/medicalRecords/1")).andExpect(status().isOk());
     }
 }

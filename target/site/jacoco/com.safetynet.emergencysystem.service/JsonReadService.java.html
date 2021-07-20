@@ -3,12 +3,16 @@
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.*;
+import com.safetynet.emergencysystem.model.JsonData;
+import com.safetynet.emergencysystem.model.PersonWithAge;
+import com.safetynet.emergencysystem.service.firestation.FireStationReadService;
+import com.safetynet.emergencysystem.service.medicalrecord.MedicalRecordReadService;
+import com.safetynet.emergencysystem.service.person.PersonReadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RestController;
 
 @Service
-<span class="fc" id="L11">public class JsonReadService {</span>
+<span class="fc" id="L15">public class JsonReadService {</span>
 
     @Autowired
     static PersonReadService personReadService;
@@ -20,30 +24,31 @@ import org.springframework.web.bind.annotation.RestController;
     static MedicalRecordReadService medicalRecordReadService;
 
     private static ObjectMapper getDefaultObjectMapper() {
-<span class="fc" id="L23">        ObjectMapper defaultObjectMapper = new ObjectMapper();</span>
-<span class="fc" id="L24">        defaultObjectMapper.configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, false);</span>
-<span class="fc" id="L25">        defaultObjectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);</span>
+<span class="fc" id="L27">        ObjectMapper defaultObjectMapper = new ObjectMapper();</span>
+<span class="fc" id="L28">        defaultObjectMapper.configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, false);</span>
+<span class="fc" id="L29">        defaultObjectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);</span>
 
-<span class="fc" id="L27">        return defaultObjectMapper;</span>
+<span class="fc" id="L31">        return defaultObjectMapper;</span>
     }
 
-<span class="fc" id="L30">    public static ObjectMapper objectMapper = getDefaultObjectMapper();</span>
+<span class="fc" id="L34">    public static ObjectMapper objectMapper = getDefaultObjectMapper();</span>
 
     public static &lt;classTargeted&gt; classTargeted read(JsonNode jsonNode, Class&lt;classTargeted&gt; classTargeted)
             throws JsonProcessingException {
 
-<span class="fc" id="L35">        return objectMapper.treeToValue(jsonNode, classTargeted);</span>
+<span class="fc" id="L39">        return objectMapper.treeToValue(jsonNode, classTargeted);</span>
     }
 
     public static String stringify(JsonNode jsonNode, boolean indented) throws JsonProcessingException {
 
-<span class="fc" id="L40">        ObjectWriter objectWriter = objectMapper.writer();</span>
+<span class="fc" id="L44">        JsonData jsonData = new JsonData();</span>
+<span class="fc" id="L45">        ObjectWriter objectWriter = objectMapper.writer();</span>
 
-<span class="pc bpc" id="L42" title="1 of 2 branches missed.">        if (indented) {</span>
-<span class="nc" id="L43">            objectWriter = objectWriter.with(SerializationFeature.INDENT_OUTPUT);</span>
+<span class="fc bfc" id="L47" title="All 2 branches covered.">        if (indented) {</span>
+<span class="fc" id="L48">            objectWriter = objectWriter.with(SerializationFeature.INDENT_OUTPUT);</span>
         }
 
-<span class="fc" id="L46">        return objectWriter.writeValueAsString(jsonNode);</span>
+<span class="fc" id="L51">        return objectWriter.writeValueAsString(jsonNode);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

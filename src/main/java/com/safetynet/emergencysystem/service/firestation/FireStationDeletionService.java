@@ -18,6 +18,8 @@ public class FireStationDeletionService {
 
         logger.debug("Delete FireStations ID: " + id);
 
-        fireStationRepository.deleteById(id);
+        if (fireStationRepository.existsById(id)) {
+            fireStationRepository.deleteById(id);
+        }
     }
 }

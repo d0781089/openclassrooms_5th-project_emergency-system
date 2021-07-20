@@ -42,7 +42,11 @@ public class MedicalRecordReadService {
 
     public MedicalRecord getMedicalRecordById(Long id) {
 
-        return medicalRecordRepository.findById(id).get();
+        if (medicalRecordRepository.existsById(id)) {
+            return medicalRecordRepository.findById(id).get();
+        } else {
+            return new MedicalRecord();
+        }
     }
 
     public List<MedicalRecord> getByFirstNameAndLastName(List<Person> persons) {

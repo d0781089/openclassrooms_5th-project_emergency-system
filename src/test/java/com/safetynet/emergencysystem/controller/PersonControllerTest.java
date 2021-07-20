@@ -17,7 +17,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -90,6 +92,22 @@ public class PersonControllerTest {
 
         String actualResponse = mvcResult.getResponse().getContentAsString();
         String expectedResponse = objectMapper.writeValueAsString(person);
+
+        assertEquals(actualResponse, expectedResponse);
+    }
+
+    @Test
+    public void shouldGetEmailsByCity() throws Exception {
+
+        Set<String> emails = new HashSet<>();
+
+        Mockito.when(personReadService.getEmailsByCity("Culver")).thenReturn(emails);
+
+        MvcResult mvcResult = mockMvc.perform(get("/communityEmail").param("city", "Culver"))
+                .andExpect(status().isOk()).andReturn();
+
+        String actualResponse = mvcResult.getResponse().getContentAsString();
+        String expectedResponse = objectMapper.writeValueAsString(emails);
 
         assertEquals(actualResponse, expectedResponse);
     }

@@ -43,8 +43,11 @@ public class FireStationReadService {
     public FireStation getFireStationById(Long id) {
 
         logger.debug("FireStationById: " + fireStationRepository.findAll());
-
-        return fireStationRepository.findById(id).get();
+        if (fireStationRepository.existsById(id)) {
+            return fireStationRepository.findById(id).get();
+        } else {
+            return new FireStation();
+        }
     }
 
     public FireStation getFireStationByAddress(String address) {

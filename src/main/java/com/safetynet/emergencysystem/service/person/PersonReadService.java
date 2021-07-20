@@ -62,7 +62,11 @@ public class PersonReadService {
 
     public Person getPersonById(Long id) {
 
-        return personRepository.findById(id).get();
+        if (personRepository.existsById(id)) {
+            return personRepository.findById(id).get();
+        } else {
+            return new Person();
+        }
     }
 
     public List<Person> getPersonsByAddress(String address) {

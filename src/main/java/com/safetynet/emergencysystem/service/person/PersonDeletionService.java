@@ -12,6 +12,8 @@ public class PersonDeletionService {
 
     public void deletePersonById(Long id) {
 
-        personRepository.deleteById(id);;
+        if (personRepository.existsById(id)) {
+            personRepository.deleteById(id);
+        }
     }
 }
